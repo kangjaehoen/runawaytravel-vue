@@ -10,20 +10,7 @@
 </script>
 
 <style>
-  body {
-        font-family: Arial, sans-serif;
-    }
 
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #f9f9f9; /* 검은색 반투명 오버레이 */
-        z-index: -1; /* 요소 위에 표시되도록 */
-    }
 
     .review-container {
         width: 700px;
@@ -138,7 +125,7 @@
         margin-top: 20px;
     }
 
-    p{
+    .ptext{
     margin-top: 20px;
 
     }
@@ -169,48 +156,6 @@
     background-color: white; /* 배경색이 변하지 않도록 유지 */
     }
 
-     /* 모달 스타일 */
-     .modal-overlay {
-            display: none; /* 기본적으로 숨김 */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은색 배경 */
-            justify-content: center;
-            align-items: center;
-            z-index: 1000; /* 다른 요소들보다 위에 위치 */
-        }
 
-        .modal {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            width: 300px;
-            text-align: center;
-        }
-
-        .modal h3 {
-            margin-bottom: 10px;
-        }
-
-        .modal button {
-            margin-top: 10px;
-            background-color: #B2D055;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 15px;
-            cursor: pointer;
-        }
-
-        .modal button:hover {
-            background-color: #5BA63D;
-        }
-        .modal .image-placeholder{
-            margin-left: 70px;
-
-        }
 
 </style>

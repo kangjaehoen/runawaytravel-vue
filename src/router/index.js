@@ -3,7 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import MyAcc from '@/pages/MyAcc.vue'
 import SellerMenu from '@/components/SellerMenu.vue'
 import AccReg from '@/pages/AccReg.vue'
-import ReviewRate from '@/components/ReviewRate.vue'
+import ReviewPage from '@/pages/ReviewPage.vue'
 import ReviewInsertPage from '@/pages/ReviewInsertPage.vue'
 
 const router = createRouter({
@@ -13,7 +13,7 @@ const router = createRouter({
     { path: '/MyAcc', component: MyAcc },
     { path: '/Seller', component : SellerMenu},
     { path: '/AccReg', component: AccReg},
-    { path: '/reviewRate', component:ReviewRate},
+    { path: '/ReviewPage', component:ReviewPage},
     { path: '/reviewInsert', component:ReviewInsertPage}
   ],
 })

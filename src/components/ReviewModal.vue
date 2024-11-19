@@ -45,7 +45,7 @@
                         </div> <!-- 여기 추가된 닫는 div 태그 -->
                     
                         <div class="review-card" v-for="(item, index) in reviewModalData.list" :key="index">
-                            <div class="user-info">{{item.userName.username}}</div>
+                            <div class="user-info">{{item.user.username}}</div>
                                 <div v-if="item.satisfy === 5">
                                     <span class="stars">★★★★★</span>
                                 </div>

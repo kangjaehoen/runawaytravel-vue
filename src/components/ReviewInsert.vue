@@ -1,7 +1,7 @@
 <template>
 
 <div class="right-column">
-            <p>숙박이 어떠셨나요?</p>
+            <p class="ptext">숙박이 어떠셨나요?</p>
             <div class="ratings">
                 <div class="rating">
                     <span>전체적 만족도</span>
@@ -57,19 +57,19 @@
         placeholder="후기를 입력해주세요."
         @input="text"
         ></textarea>
-        <button class="submit-btn" @click="openModal">후기 등록</button>
+        <button class="submit-btn" @click="submitReview">후기 등록</button>
     </div>
 
     <!-- 모달 -->
-    <div v-if="isModalOpen " :style="{ display: isModalOpen ? 'flex' : 'none' }" class="modal-overlay">
-        <div class="modal">
+    <!-- <div v-if="isModalOpen " :style="{ display: isModalOpen ? 'flex' : 'none' }" class="modal-overlay2">
+        <div class="modal2">
         <div class="image-placeholder">숙소 이미지</div>
         <h3>숙소 정보</h3>
-        <p>리뷰를 정말 등록하시겠습니까?</p>
+        <p  class="ptext">리뷰를 정말 등록하시겠습니까?</p>
         <button @click="submitReview">YES</button>
         <button @click="closeModal">NO</button>
         </div>
-    </div>
+    </div> -->
     
 </template>
 
@@ -131,17 +131,17 @@
     }
 
     // 모달 열기
-    const openModal = () => {
-        console.log("하이 모달");
-        isModalOpen.value = true;
-        console.log(reviewData);
+    // const openModal = () => {
+    //     console.log("하이 모달");
+    //     isModalOpen.value = true;
+    //     console.log(reviewData);
 
-    };
+    // };
 
-    // 모달 닫기
-    const closeModal = () => {
-        isModalOpen.value = false;
-    };
+    // // 모달 닫기
+    // const closeModal = () => {
+    //     isModalOpen.value = false;
+    // };
 
 
     const reviewData = {

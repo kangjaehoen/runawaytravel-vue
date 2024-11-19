@@ -2,7 +2,7 @@
     <div class="review-cards">
         <div class="review-card1"  v-for="(item, index) in reviewData.list" :key="index">
             <div class="review-details">
-                <div class="user-id">{{item.userName.username}}</div>
+                <div class="user-id">{{item.user.username}}</div>
                 <div v-if="item.satisfy === 5">
                     <span class="stars">★★★★★</span>
                 </div>

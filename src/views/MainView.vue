@@ -1,10 +1,10 @@
 <template>
     <div class="form">
-      반갑습니다. {{ name }}님
+      반갑습니다. dd님
     </div>
   </template>
   
-  <script>
+  <!-- <script>
   import * as decode from 'jwt-decode';
   
   export default {
@@ -36,4 +36,4 @@
     },
   };
   </script>
-  
+   -->

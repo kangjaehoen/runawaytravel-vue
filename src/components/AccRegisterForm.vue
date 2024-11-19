@@ -1,6 +1,9 @@
 <template>
 <form ref="regform">
     <fieldset>
+
+        <!--제출했을 때 username으로 해당 accomNum을 가지고 있는지 확인하는 알고리즘이 필요해보임. 안그러면 클라를 조작할 수 있잖아-->
+        {{ accomNum }}
         <legend>상품명</legend>
         <input type="text" name="accName" maxlength="30" required>
     </fieldset>
@@ -22,17 +25,9 @@
         <legend>숙소 정보</legend>
         <div class="flex-container">
             <div class="left-section">
-                <div class="file-upload-wrapper">
-                <span>이미지 삽입</span><br>
-                <input type="file" name="imageUpload" class="file-upload" id="imageUpload" accept="image/*" multiple>
-                <label for="imageUpload">파일 선택</label>
-
-            <button class="navigation-button" id="prevButton" type="button">이전</button>
-            <button class="navigation-button" id="nextButton" type="button">이전</button>
+                <AccRegImage></AccRegImage>
             </div>
-            <img id="previewImage" class="preview-image" src="#" alt="이미지 미리보기">
-        </div>
-            <div class="right-section">
+        <div class="right-section">
                 <span>숙소 전화번호</span><input type="tel" name="accCall"><br>
                 <span>카테고리</span><input type="text" name="category" list="categorylist">
                 <datalist id="categorylist">
@@ -72,12 +67,14 @@
     <fieldset>
         <legend>휴일</legend>
         <label v-for="day in weekday">
-            <span v-text=day.dayofweek></span><input type="checkbox" name="dayoff" :value="day.value" :checked="day.checked">
+            <span v-text=day.dayofweek></span><input type="checkbox" name="dayoff" :value="day.value">
         </label>
     </fieldset>
     <div>
+        <fieldset>
         <legend>숙소 주소</legend>
         <Post></Post>
+        </fieldset>
     </div>
     <fieldset>
         <legend>상세소개</legend>
@@ -91,58 +88,105 @@
     <fieldset style="border : none;">
         <div class="button-container">
             <button type="submit" id="upload" @click="url($event,'accUpload')" value="등록하기">등록하기</button>
-            <button type="submit" id="update" @click="url($event,'uploadtest3')" value="수정하기">수정하기</button>
-            <button type="button" id="del" @click="del($event,'accDel')" value="숙소삭제">삭제하기</button>
+            <button type="submit" id="update" @click="url($event,'accUpload')" value="수정하기" v-if="accomNum">수정하기</button>
+            <button type="button" id="del" @click="del($event,'accDel')" value="숙소삭제" v-if="accomNum">삭제하기</button>
         </div>
     </fieldset>
 </form>
 </template>
 <script setup>
 import axios from 'axios';
-import Post from './Postcode.vue';
-import { reactive, ref } from 'vue';
+import Post from './AccRegPostcode.vue';
+import { onMounted, reactive, ref } from 'vue';
 import router from '@/router';
+import AccRegImage from './AccRegImage.vue';
+import { useRoute } from 'vue-router';
 const weekday = reactive([
-    {"dayofweek":"월","value":1,"checked":false},
-    {"dayofweek":"화","value":2,"checked":false},
-    {"dayofweek":"수","value":3,"checked":false},
-    {"dayofweek":"목","value":4,"checked":false},
-    {"dayofweek":"금","value":5,"checked":false},
-    {"dayofweek":"토","value":6,"checked":false},
-    {"dayofweek":"일","value":7,"checked":false},
+    {"dayofweek":"월","value":1},
+    {"dayofweek":"화","value":2},
+    {"dayofweek":"수","value":3},
+    {"dayofweek":"목","value":4},
+    {"dayofweek":"금","value":5},
+    {"dayofweek":"토","value":6},
+    {"dayofweek":"일","value":7},
 ])
 
 const regform = ref(null);
+let inputs = [];
+const route = useRoute();
+const accomNum = ref(route.query.accomNum);
+const lastdata = ref(null);
+//저장or수정
 const url = (e,url) =>{
     e.preventDefault();
-    console.log(url);
+    if (!regform.value.reportValidity()) {
+        return; // 유효성 검사 실패 시 중단
+    }
     const formdata = new FormData(regform.value);
-    for(let elem of formdata.entries()){
-        console.log(elem);
+    for(let input of inputs){
+        if(input.value=='' || (input.type==='number' && isNaN(Number(input.value))))
+        formdata.delete(input.name);
+    }
+    //수정하는 경우
+    if (e.target.value=='수정하기' && !isNaN(Number(accomNum.value))){
+        formdata.append("accomNum" , accomNum.value);
     }
     axios
     .post(`http://localhost:8086/${url}`,formdata)
     .then((response)=>{
-        console.log(response.data);
+        alert(response.data);
+        router.push({name : 'myacc'})
     })
     .catch((error)=>{
         console.log("what the hell "+error);
     });
-}
+};
+//값 불러오기
+const loaddata = () =>{
+    if (!isNaN(Number(accomNum.value))){
+        axios
+        .get(`http://localhost:8086/accLoad?accomNum=${accomNum.value}`)
+        .then((response)=>{
+            lastdata.value = response.data.oneAcc;
+            for(let input of inputs){
+                //여러개 선택하는 input 먼저 값 정하기
+                if(input.name == 'accType' && input.value == lastdata.value[input.name]){
+                        input.checked = true;
+                    }
+                else if(input.name == 'dayoff' && lastdata.value['dayoff'] != null && !isNaN(Number(lastdata.value['dayoff']))){
+                        if([...lastdata.value['dayoff']].includes(input.value)){
+                        input.checked = true;
+                        };
+                    }
+                //나머지 input들
+                else if(lastdata.value[input.name] != undefined){
+                    input.value = lastdata.value[input.name];
+                }
+            }
 
+        })
+        .catch((error)=>{
+            console.log(error);
+        });
+    }
+}
+//삭제
 const del = (e,url) =>{
     //e.preventDefault(); type이 button이라 필요 없음.
     axios
-    .delete(`http://localhost:8086/${url}`)
+    .delete(`http://localhost:8086/${url}`,{params : {accomNum : accomNum.value}})
     .then((response)=>{
         alert(response.data);
-        router.push("/myacc");
+        router.push({name : "myacc"});
     })
     .catch((error)=>{
         console.log("what the hell "+error);
     });
-}
-
+};
+onMounted(()=>{
+    inputs = [...regform.value.querySelectorAll('input'), ...regform.value.querySelectorAll('textarea')];
+    loaddata();
+});
 
 </script>
 <style>

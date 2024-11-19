@@ -1,9 +1,12 @@
 <template>
     <input v-model="state.Search" @keyup.enter="searchmine"></input>
     <br>
-    <table>
+    <button @click="checkedonsalechange">판매상태 변경</button>
+    <button @click="checkedaccdelete">삭제하기</button>
+    <table class="myacctable">
         <thead>
             <tr>
+                <td><input type="checkbox" @change="checkchange($event)"></td>
                 <td>숙소명</td>
                 <td>주소</td>
                 <td>기본가격</td>
@@ -13,16 +16,16 @@
                 <td>판매상태</td>
             </tr>
         </thead>
-        <tbody>
-            <tr v-for="row in state.Acclist" :key="row.accomNum">
-                <td>{{ row.accName }}</td>
+        <tbody v-if="state.Acclist.length > 0">
+            <tr v-for="(row, index) in state.Acclist" :key="row.accomNum">
+                <td><input type="checkbox" v-model="state.checkboxs[index]"></td>
+                <td @click="loadAcc(row.accomNum)">{{ row.accName }}</td>
                 <td>{{ row.address }} {{ row.detailAddress }}</td>
                 <td>{{ row.price }}</td>
                 <td>{{ row.kidPrice }}</td>
                 <td>{{ row.category }}</td>
                 <td>{{ row.accType }}</td>
-                <td>{{ salestatus[row.onSale] }}</td>
-                
+                <td>{{ salestatus[row.onSale] }}</td>                
             </tr>
         </tbody>
     </table>
@@ -32,13 +35,15 @@
     </div>
 </template>
 <script setup>
+    import router from '@/router';
     import axios from 'axios';
-    import { onMounted, reactive, ref } from 'vue';
+    import { computed, onMounted, reactive, ref } from 'vue';
 const state = reactive({
     Acclist : [],
     Totalpage : "",
     Totalelement : "",
     Search : "",
+    checkboxs : [false,false,false,false,false,false,false,false,false,false],
 });
 const salestatus = ["판매중지","판매중"];
 const Currentpage = ref(0);
@@ -74,10 +79,72 @@ const getData = ()=>{
         console.error('데이터를 가져오던 중 에러 발생',error);
     });
 };
+
+const loadAcc = (number) =>{
+    router.push({name : 'accreg', query : {accomNum : number}});
+}
+const checklist = computed(()=>{
+    const ary = [];
+    for(let eachcheck in state.checkboxs){
+        if(state.checkboxs[eachcheck]){
+            ary.push(state.Acclist[eachcheck].accomNum);
+        }
+    }
+    return ary;
+})
+
+const checkchange = (e)=>{
+    if(e.target.checked){
+        state.checkboxs = [true,true,true,true,true,true,true,true,true,true];
+    } else {
+        state.checkboxs = [false,false,false,false,false,false,false,false,false,false];
+    }
+}
+const checkedonsalechange = async() =>{
+    if(checklist.value.length != 0){
+        await axios
+        .post("http://localhost:8086/changeonsale",checklist.value)
+        .then((response)=>console.log(response.data));
+    }
+    getData();
+}
+const checkedaccdelete = async()=>{
+    if(checklist.value.length !=0){
+        let param = checklist.value.join(",");
+        await axios
+        .delete(`http://localhost:8086/deleteacclist?accomNumList=${param}`)
+        .then((response)=>{console.log(response.data)});
+    }
+    getData();
+}
+
 onMounted(() => {
   getData();
 });
 </script>
 <style>
-
+    .myacctable{
+        background-color: cornsilk;
+        text-wrap: nowrap;
+    }
+    .myacctable thead{
+        text-align: center;
+        background-color: #B2D055;
+        color: #45a049;
+        font-size: 20px;
+        font-weight: bold;
+        text-wrap: nowrap;
+    }
+    .myacctable td{
+        min-width: 120px;
+    }
+    .myacctable tr td:nth-of-type(1),
+    .myacctable thead tr td:nth-of-type(1) {
+        min-width: 30px;
+        width: 30px;
+        text-align: center;
+    }
+    .myacctable tr:nth-of-type(2n){
+        background-color: wheat;
+    }
 </style>

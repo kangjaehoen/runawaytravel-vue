@@ -72,31 +72,25 @@
 
                 <div class="form-group">
                 <label for="checkIn" class="form-label">체크인</label><br />
-                <!-- <input
-                    type="date"
-                    class="form-control form-control-lg"
-                    v-model="checkIn"
-                    required
-                /> -->
+           
                 <DatePicker 
                     v-model="checkIn"
                     :disabled-date="isDisabledDate"
-                    :input-attr="{ placeholder: '연도-월-일' }"
+                    format="YYYY-MM-DD"
+                    :locale="ko"
+                    append-to="body"
                 />    
 
                 </div>
                 <div class="form-group">
                 <label for="checkOut" class="form-label">체크아웃</label><br />
-                <!-- <input
-                    type="date"
-                    class="form-control form-control-lg"
-                    v-model="checkOut"
-                    required
-                /> -->
+             
                 <DatePicker
                     v-model="checkOut"
                     :disabled-date="isDisabledDate"
-                    :input-attr="{ placeholder: '연도-월-일' }"
+                    format="YYYY-MM-DD"
+                    :locale="ko"
+                    append-to="body"
                 />
                 </div>
                 <div class="form-group">
@@ -159,10 +153,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, nextTick, computed  } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import DatePicker from 'vue-datepicker-next';
 import 'vue-datepicker-next/index.css';
+import dayjs from 'dayjs';
+import ko from 'vue-datepicker-next/locale/ko';
 import ConvenienceItem from '@/components/ConvenienceItem.vue';
 import GuestCounter from '@/components/GuestCounter.vue';
 import axios from 'axios';
@@ -188,6 +184,11 @@ try {
 }
 };
 
+const onDateChange = (value) => {
+    console.log('checkIn value changed: ', value);
+};
+
+
 const isDisabledDate = (date) => {
     const formattedDate = date.toISOString().split('T')[0];
 
@@ -199,7 +200,7 @@ const isDisabledDate = (date) => {
     // 체크인 날짜 <= 선택 날짜 < 체크아웃 날짜
     return formattedDate >= checkInDate.toISOString().split('T')[0] &&
             formattedDate < checkOutDate.toISOString().split('T')[0]; // 체크아웃 날짜는 선택 가능
-    });
+    }); 
 };
 
 
@@ -213,8 +214,8 @@ const reservInfo = () =>{
     router.push({
         name: "reservation",
         query: {
-            checkIn: checkIn.value,
-            checkOut: checkOut.value,
+            checkIn: formattedCheckIn.value,
+            checkOut: formattedCheckOut.value,
             adultCnt: adultCnt.value,
             kidCnt: kidCnt.value, 
             totalDays: totalDays.value,
@@ -232,8 +233,16 @@ const reviewList = ref([]);
 const revCnt = ref(0);
 const revRate = ref(null);
 
-const checkIn = ref('');
-const checkOut = ref('');
+const checkIn = ref(new Date());
+const checkOut = ref(new Date(new Date().setDate(new Date().getDate() + 1)));
+
+// const checkIn = ref(dayjs().format('YYYY-MM-DD'));  // 초기값을 문자열로 설정
+// const checkOut = ref(dayjs().add(1, 'day').format('YYYY-MM-DD'));
+
+//날짜 포맷팅
+const formattedCheckIn =computed(() => dayjs(checkIn.value).format('YYYY-MM-DD'));
+const formattedCheckOut =computed(() => dayjs(checkOut.value).format('YYYY-MM-DD'));
+
 const reservation = ref([]);
 const adultCnt = ref(1);
 const kidCnt = ref(0);
@@ -271,30 +280,43 @@ calculateDays();
 
 const calculateDays = () => {
 if (checkIn.value && checkOut.value) {
-    const date1 = new Date(checkIn.value);
-    const date2 = new Date(checkOut.value);
+    // const date1 = new Date(checkIn.value);
+    // const date2 = new Date(checkOut.value);
+    const date1 = typeof checkIn.value === 'string' ? new Date(checkIn.value) : checkIn.value;
+    const date2 = typeof checkOut.value === 'string' ? new Date(checkOut.value) : checkOut.value;
+
+
     const timeDifference = date2.getTime() - date1.getTime();
     const daysDifference = Math.abs(timeDifference / (1000 * 60 * 60 * 24));
     // totalDays.value = daysDifference;
+    totalDays.value = daysDifference > 0 ? daysDifference : 0;
+    updatePrice(totalDays.value);
 
-    // if (daysDifference <= 0) {
-    // alert('체크아웃 날짜를 확인해주세요.');
-    // return;
-    // }
-    // updatePrice(daysDifference);
-
-    if(daysDifference > 0){
-        totalDays.value= daysDifference;
-        updatePrice(totalDays.value);
-    }else{
-        totalDays.value=0;
-        totalPayment.value=0;
+    if (daysDifference <= 0) {
+    alert('체크아웃 날짜를 확인해주세요.');
+    return;
     }
+    updatePrice(daysDifference);
+
+    // if(daysDifference > 0){
+    //     totalDays.value= daysDifference;
+    //     updatePrice(totalDays.value);
+    // }else{
+    //     totalDays.value=0;
+    //     totalPayment.value=0;
+    // }
 }
 };
 
+
 //checkOut 변경시 자동 날짜계산
-watch([checkIn, checkOut], calculateDays);
+//watch([checkIn, checkOut], calculateDays);
+
+watch([checkIn, checkOut], async () => {
+    await nextTick(); // Vue의 다음 렌더링 사이클까지 기다림
+    calculateDays();
+});
+
 
 
 const updatePrice = (days) => {
@@ -304,6 +326,7 @@ const priceOneKid = parseFloat(aVO.value.kidPrice) || 0;
 const maxOccupancy = parseInt(aVO.value.maxocc) || 0;
 
 const totalGuests = adultCnt.value + kidCnt.value;
+
 let totalPrice = 0;
 
 if (totalGuests <= maxOccupancy) {
@@ -329,6 +352,8 @@ totalPayment.value = totalPrice;
 
 onMounted(() => {
     accomInfo();
+    calculateDays();
+
 });
 
 </script>
@@ -385,8 +410,8 @@ header {
 }
 .info-and-sidebar {
     display: flex;
-    gap: 20px; /* 편의시설과 사이드바 사이 간격 */
-}
+    gap: 20px; 
+} 
 .convenience-and-reviews {
     flex: 2; /* 편의시설과 리뷰가 더 넓은 공간을 차지하도록 설정 */
 }
@@ -399,11 +424,13 @@ header {
     border-radius: 8px;
     border: 1px solid #ccc;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: visible;
 }
 .container {
     width: 100%;
     max-width: 1140px;
     padding: 0 15px;
+    overflow: visible;
 }
 .main-content {
     display: flex;
@@ -454,9 +481,28 @@ header {
     align-items: center;
     justify-content: center;
 }
-
-/* .vue-datepicker-next {
-    z-index: 1050; /* 모달이나 다른 요소보다 위로 오도록 설정 
+/* 
+.vue-datepicker-popup {
+    position: absolute !important;
+    top: 0 !important; 
+    left: 0 !important;
+    z-index: 9999 !important;
+    transform: none !important;
+    visibility: visible !important;
 } */
+.mx-datepicker-popup {
+    position: absolute !important;
+    top: auto !important;
+    bottom: 10px !important; /* 적절한 값을 사용하여 아래쪽으로 위치 설정 */
+    left: 0 !important;
+    transform: none !important;
+    visibility: visible !important;
+    z-index: 9999 !important; /* 다른 UI 요소보다 위에 보이도록 설정 */
+}
+.row {
+    overflow: visible; /* 팝업이 잘리지 않도록 설정 */
+}
+
+
 
 </style>

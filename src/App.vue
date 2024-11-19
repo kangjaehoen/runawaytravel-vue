@@ -1,32 +1,30 @@
 <template>
-  <header>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
-      <Header />
+      <Header></Header>
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/seller">판매자페이지</RouterLink>
+        <Main></Main>
       </nav>
-      <main>
-        <RouterView />
-      </main>  
+      <RouterView></RouterView>
     </div>
-  </header>
+  
   <br>
-  <RouterView />
-  <Footer />
+  <Footer></Footer>
 </template>
 
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
-import { RouterLink, RouterView } from 'vue-router'
 import Main from './views/Main.vue';
 import AccDetail from './views/AccDetail.vue';
 import Reservation from './views/Reservation.vue';
 import Payment from './views/Payment.vue';
+import Header from './components/Header.vue';
+import Footer from './components/Footer.vue';
 
 </script>
 <style scoped>

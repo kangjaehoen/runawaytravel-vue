@@ -4,7 +4,7 @@ import MyAcc from '@/pages/MyAcc.vue'
 import SellerMenu from '@/components/SellerMenu.vue'
 import AccReg from '@/pages/AccReg.vue'
 import ReviewRate from '@/components/ReviewRate.vue'
-import ReviewPage from '@/pages/ReviewPage.vue'
+import ReviewInsertPage from '@/pages/ReviewInsertPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,7 +14,7 @@ const router = createRouter({
     { path: '/Seller', component : SellerMenu},
     { path: '/AccReg', component: AccReg},
     { path: '/reviewRate', component:ReviewRate},
-    { path: '/reviewPage', component:ReviewPage}
+    { path: '/reviewInsert', component:ReviewInsertPage}
   ],
 })
 

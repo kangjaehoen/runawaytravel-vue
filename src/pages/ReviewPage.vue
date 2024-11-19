@@ -325,5 +325,39 @@
             border-radius: 25px;
             width: 200px;
         }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            background-color: white;
+            border : none;
+            color: #B2D055;
+            padding: 10px 15px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .pagination button:hover {
+            color:#B2D055;
+           
+        }
+
+        .pagination button:disabled {
+            background-color: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .pagination button.active-page {
+            color: #86a722;
+            font-weight: bold;
+        
+        }
 
 </style> 

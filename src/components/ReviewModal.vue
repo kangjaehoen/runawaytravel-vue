@@ -11,7 +11,6 @@
             </div>
             <hr class="review-hr">
             <div class="modal-body">
-            <!-- 리뷰 목록 -->
                     <div class="modal-half-left">
                         <div class="icon-item">
                             <i class="fas fa-bars"></i>
@@ -69,10 +68,10 @@
                                 <button 
                                     :disabled="reviewModalData.currentPage === 0" 
                                     @click="goToPage(reviewModalData.currentPage - 1)">
-                                    이전
+                                    Prev
                                 </button>
                                 <button 
-                                    v-for="page in reviewModalData.totalPage" 
+                                    v-for="page in pageRange" 
                                     :key="page" 
                                     :class="{ 'active-page': page - 1 === reviewModalData.currentPage }" 
                                     @click="goToPage(page - 1)">
@@ -82,7 +81,7 @@
                                 <button 
                                     :disabled="reviewModalData.currentPage === reviewModalData.totalPage - 1" 
                                     @click="goToPage(reviewModalData.currentPage + 1)">
-                                    다음
+                                    Next
                                 </button>
                         </div>
                     </div>
@@ -96,7 +95,7 @@
 
 <script setup>
 import axios from 'axios';
-import { ref, defineExpose ,defineProps, watch, onMounted } from 'vue';
+import { ref, defineExpose ,defineProps, watch, onMounted , computed  } from 'vue';
 
 let num = 75;
 
@@ -116,6 +115,7 @@ let num = 75;
 });   
 
 
+
 const reviewRateData = ref(props.reviewRateData);
 
 // Props 값 변경 시 reviewRateData 업데이트
@@ -128,8 +128,6 @@ watch(
 );
 
 
-
-
 const modal = ref(null);
 
 const openModal = () => {
@@ -138,9 +136,6 @@ const openModal = () => {
         modal.value.style.display = 'flex';
     }
 };
-
-
-
 
 defineExpose({
     openModal,
@@ -153,13 +148,37 @@ const reviewModalData = ref({
         currentPage: 0,
     });
 
-  
+ const pageRange = computed(() => {
+    const totalPages = reviewModalData.value.totalPage;
+    const currentPage = reviewModalData.value.currentPage;
+
+    const maxVisiblePages = 5; // 최대 보여줄 페이지 버튼 수
+    const startPage = Math.floor(currentPage / maxVisiblePages) * maxVisiblePages + 1; 
+    const endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
+
+    // startPage부터 endPage까지의 배열 생성
+    return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
+});
+
+const search = ref(''); 
+
 const searchReviews = () => {
-      console.log('검색어:', search.value); 
-        axios.get(`http://localhost:8086/review/${num}/${search.value}?page=${page}`)
+    console.log('검색어:', search.value); 
+
+    reviewModalData.value.currentPage = 0;
+
+    if(search.value != ''){
+        axios.get(`http://localhost:8086/review/${num}/${search.value}?page=${reviewModalData.value.currentPage}`)
             .then((response) => {
             reviewModalData.value = response.data;
         });
+    } else {
+        axios.get(`http://localhost:8086/review/${num}?page=${reviewModalData.value.currentPage}`)
+            .then((response) => {
+            reviewModalData.value = response.data;
+        });
+    }          
+    
 };
 
 
@@ -168,7 +187,6 @@ onMounted(()=> {
             .then((response)=>{
             reviewModalData.value= response.data;
     });
-    
 });
 
 console.log(reviewModalData.value);
@@ -179,10 +197,18 @@ const goToPage = (page) => {
     if (page >= 0 && page < reviewModalData.value.totalPage) {
         reviewModalData.value.currentPage = page;
 
-        axios.get(`http://localhost:8086/review/${num}?page=${page}`)
-            .then((response) => {
-                reviewModalData.value = response.data;
-            });
+        if (search.value !== '') {
+            axios.get(`http://localhost:8086/review/${num}/${search.value}?page=${reviewModalData.value.currentPage}`)
+                .then((response) => {
+                    reviewModalData.value = response.data;
+                });
+        } else {
+            axios.get(`http://localhost:8086/review/${num}?page=${reviewModalData.value.currentPage}`)
+                .then((response) => {
+                    reviewModalData.value = response.data;
+                });
+        }
+        
     }
     console.log("클릭 이벤트");
     console.log("현재 페이지 : " + reviewModalData.value.currentPage);

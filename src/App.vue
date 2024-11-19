@@ -13,8 +13,7 @@ import HelloWorld from './components/HelloWorld.vue'
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
         <RouterLink to="/seller">판매자페이지</RouterLink>
-        <RouterLink to="/reviewPage">리뷰 평점 기능 확인</RouterLink>
-        
+        <RouterLink to="/reviewInsert">리뷰 등록</RouterLink>
       </nav>
     </div>
   </header>

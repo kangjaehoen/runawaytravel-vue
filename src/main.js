@@ -13,7 +13,7 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 
-app.component("Header", Header)
+app.component("Header",Header)
 app.component("Footer",Footer)
 
 app.mount('#app')

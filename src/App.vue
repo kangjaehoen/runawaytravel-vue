@@ -7,7 +7,6 @@
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/seller">판매자페이지</RouterLink>
-        <Main></Main>
       </nav>
       <RouterView></RouterView>
     </div>

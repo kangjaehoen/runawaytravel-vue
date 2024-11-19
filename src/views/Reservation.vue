@@ -64,7 +64,7 @@ const totalPayment = ref(route.query.totalPayment);
 const revCnt= ref(0);
 const revRate= ref('');
 const accom= ref({});
-
+const reservation = ref([]);
 
 //query전달 외 accom정보들
 const resAccom = async () => {
@@ -80,6 +80,7 @@ const resAccom = async () => {
             revCnt.value= response.data.revCnt;
             revRate.value= response.data.revRate;
             accom.value= response.data.accom;
+            reservation.value= response.data.reservation;
         }
     
     }catch(error){
@@ -103,20 +104,21 @@ const reservationInfo = {
     kidCnt: kidCnt.value,
     totalDays: totalDays.value,
     totalPayment: totalPayment.value,
+
 };
 
-try {
-    // 예약날짜 중복체크
-    const response = await axios.post('/reservation/chkDuplicate', reservationInfo);
-    if (response.data === 0) {
-    await insertReservation(reservationInfo);
-    } else {
-    alert('해당 날짜에는 예약이 불가능합니다.');
-    }
-} catch (error) {
-    console.error('예약 중복 체크 실패:', error);
-}
-};
+// try {
+//     // 예약날짜 중복체크
+//     const response = await axios.post('/reservation/chkDuplicate', reservationInfo);
+//     if (response.data === 0) {
+//     await insertReservation(reservationInfo);
+//     } else {
+//     alert('해당 날짜에는 예약이 불가능합니다.');
+//     }
+// } catch (error) {
+//     console.error('예약 중복 체크 실패:', error);
+// }
+
 
 // 예약 정보 삽입
 const insertReservation = async (reservationInfo) => {
@@ -174,6 +176,7 @@ const insertPayment = async (payInfo) => {
     } catch (error) {
     alert('결제 실패');
 }
+};
 };
 
 onMounted(() => {

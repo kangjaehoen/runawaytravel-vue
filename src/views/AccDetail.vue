@@ -60,37 +60,34 @@
             </div>
             <hr />
             <div class="additional-info">
-                <h4>호스트: {{ list.username?.name }}</h4><br> <!--옵셔널 체이닝-->
+                <h4>호스트: {{ list.user?.name }}</h4><br> <!--옵셔널 체이닝-->
                 <p>숙소설명: {{ list.informtext }}</p><br>
                 <p>이용규칙: {{ list.accomRule }}</p>
             </div>
             </div>
 
             <!-- Sidebar -->
-            <div class="sidebar" id="sidebar">
+        <div class="sidebar" id="sidebar">
             <form @submit.prevent="validateForm">
 
                 <div class="form-group">
                 <label for="checkIn" class="form-label">체크인</label><br />
-           
                 <DatePicker 
-                    v-model="checkIn"
+                    :model-value="checkIn"
+                    @change="updateCheckIn"
                     :disabled-date="isDisabledDate"
                     format="YYYY-MM-DD"
                     :locale="ko"
-                    append-to="body"
                 />    
-
                 </div>
                 <div class="form-group">
                 <label for="checkOut" class="form-label">체크아웃</label><br />
-             
                 <DatePicker
-                    v-model="checkOut"
+                    :model-value="checkOut"
+                    @change="updateCheckOut"
                     :disabled-date="isDisabledDate"
                     format="YYYY-MM-DD"
                     :locale="ko"
-                    append-to="body"
                 />
                 </div>
                 <div class="form-group">
@@ -207,15 +204,15 @@ const isDisabledDate = (date) => {
 //props로 예약정보  넘기기
 const router= useRouter();
 const reservInfo = () =>{
-    if(!validateForm){
+    if(!validateForm()){
         return;
     }
 
     router.push({
         name: "reservation",
         query: {
-            checkIn: formattedCheckIn.value,
-            checkOut: formattedCheckOut.value,
+            checkIn: dayjs(checkIn.value).format('YYYY-MM-DD'),
+            checkOut:dayjs(checkOut.value).format('YYYY-MM-DD'),
             adultCnt: adultCnt.value,
             kidCnt: kidCnt.value, 
             totalDays: totalDays.value,
@@ -233,15 +230,18 @@ const reviewList = ref([]);
 const revCnt = ref(0);
 const revRate = ref(null);
 
-const checkIn = ref(new Date());
-const checkOut = ref(new Date(new Date().setDate(new Date().getDate() + 1)));
+// const checkIn = ref(new Date());
+// const checkOut = ref(new Date(new Date().setDate(new Date().getDate() + 1)));
+
+const checkIn= ref(null);
+const checkOut= ref(null);
 
 // const checkIn = ref(dayjs().format('YYYY-MM-DD'));  // 초기값을 문자열로 설정
 // const checkOut = ref(dayjs().add(1, 'day').format('YYYY-MM-DD'));
 
 //날짜 포맷팅
-const formattedCheckIn =computed(() => dayjs(checkIn.value).format('YYYY-MM-DD'));
-const formattedCheckOut =computed(() => dayjs(checkOut.value).format('YYYY-MM-DD'));
+// const formattedCheckIn =computed(() => dayjs(checkIn.value).format('YYYY-MM-DD'));
+// const formattedCheckOut =computed(() => dayjs(checkOut.value).format('YYYY-MM-DD'));
 
 const reservation = ref([]);
 const adultCnt = ref(1);
@@ -254,8 +254,33 @@ const guestCounterVisible = ref(true);
 const route = useRoute();
 const accomNum = route.params.accomNum;
 
+// const updateCheckIn = (value) => {
+//   checkIn.value = value;
+//   console.log('체크인 날짜 업데이트:', value);
+// };
+
+// const updateCheckOut = (value) => {
+//   checkOut.value = value;
+//   console.log('체크아웃 날짜 업데이트:', value);
+// };
+
+
+const updateCheckIn = async (value) => {
+  checkIn.value = value;  // 선택한 값을 반영
+  await nextTick(); // 렌더링 후 값 반영 확인
+  console.log('체크인 날짜 업데이트:', checkIn.value);
+};
+
+const updateCheckOut = async (value) => {
+  checkOut.value = value;  // 선택한 값을 반영
+  await nextTick(); // 렌더링 후 값 반영 확인
+  console.log('체크아웃 날짜 업데이트:', checkOut.value);
+};
 
 const validateForm = () => {
+    console.log('checkIn:', checkIn.value);
+    console.log('checkOut:', checkOut.value);
+
 if (!checkIn.value || !checkOut.value) {
     alert('체크인과 체크아웃 날짜를 선택해주세요.');
     return false;
@@ -263,6 +288,9 @@ if (!checkIn.value || !checkOut.value) {
 
 const date1 = new Date(checkIn.value);
 const date2 = new Date(checkOut.value);
+
+console.log('Parsed date1:', date1);
+console.log('Parsed date2:', date2);
 
 if (date2.getTime() <= date1.getTime()) {
     alert('체크아웃 날짜는 체크인 날짜 이후여야 합니다.');
@@ -280,14 +308,14 @@ calculateDays();
 
 const calculateDays = () => {
 if (checkIn.value && checkOut.value) {
-    // const date1 = new Date(checkIn.value);
-    // const date2 = new Date(checkOut.value);
-    const date1 = typeof checkIn.value === 'string' ? new Date(checkIn.value) : checkIn.value;
-    const date2 = typeof checkOut.value === 'string' ? new Date(checkOut.value) : checkOut.value;
+    const date1 = new Date(checkIn.value);
+    const date2 = new Date(checkOut.value);
+    // const date1 = typeof checkIn.value === 'string' ? new Date(checkIn.value) : checkIn.value;
+    // const date2 = typeof checkOut.value === 'string' ? new Date(checkOut.value) : checkOut.value;
 
 
     const timeDifference = date2.getTime() - date1.getTime();
-    const daysDifference = Math.abs(timeDifference / (1000 * 60 * 60 * 24));
+    const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
     // totalDays.value = daysDifference;
     totalDays.value = daysDifference > 0 ? daysDifference : 0;
     updatePrice(totalDays.value);
@@ -312,11 +340,17 @@ if (checkIn.value && checkOut.value) {
 //checkOut 변경시 자동 날짜계산
 //watch([checkIn, checkOut], calculateDays);
 
-watch([checkIn, checkOut], async () => {
-    await nextTick(); // Vue의 다음 렌더링 사이클까지 기다림
-    calculateDays();
-});
+// watch([checkIn, checkOut], async () => {
+//     if(checkIn.value && checkOut.value){
+//         await nextTick(); // Vue의 다음 렌더링 사이클까지 기다림
+//         calculateDays();
+//     }
+// });
 
+watch([checkIn, checkOut], ([newCheckIn, newCheckOut]) => {
+  console.log('watch에서 체크인 변경됨:', newCheckIn);
+  console.log('watch에서 체크아웃 변경됨:', newCheckOut);
+});
 
 
 const updatePrice = (days) => {

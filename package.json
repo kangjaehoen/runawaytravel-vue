@@ -11,8 +11,11 @@
   "dependencies": {
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
+    "date-format-parse": "^0.2.7",
+    "dayjs": "^1.11.13",
     "pinia": "^2.2.6",
     "vue": "^3.5.12",
+    "vue-datepicker-next": "^1.0.3",
     "vue-router": "^4.4.5"
   },
   "devDependencies": {

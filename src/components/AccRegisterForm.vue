@@ -152,7 +152,7 @@ const loaddata = () =>{
                 if(input.name == 'accType' && input.value == lastdata.value[input.name]){
                         input.checked = true;
                     }
-                else if(input.name == 'dayoff' && isNaN(Number(lastdata.value['dayoff']))){
+                else if(input.name == 'dayoff' && lastdata.value['dayoff'] != null && !isNaN(Number(lastdata.value['dayoff']))){
                         if([...lastdata.value['dayoff']].includes(input.value)){
                         input.checked = true;
                         };

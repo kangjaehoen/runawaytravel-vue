@@ -1,7 +1,7 @@
 <template>
     <div :class ="date.getMonth()==thismonth ? 'calendar thismonth' : 'calendar lastnextmonth'">
         <p style="font-size: 23;">{{date.getDate()}}</p>
-        <p class="eachres" v-for="elem in data" :style="{backgroundColor : elem[2]}" @click="sendthisres(elem[1])">{{ elem[1].accom.accName }}</p>
+        <p v-for="elem in data" :style="{backgroundColor : elem[2]}" class="eachres" @click="sendthisres(elem[1])">{{ elem[1].accom.accName }}</p>
     </div>
 </template>
 <script setup>
@@ -31,5 +31,9 @@
         color : white;
         border-radius: 40px;
         text-align: center;
+        cursor: pointer;
+    }
+    .eachres:hover{
+        font-size: larger;
     }
 </style>

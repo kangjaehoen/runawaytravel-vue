@@ -106,7 +106,6 @@ import CalendarOneDetail from './CalendarOneDetail.vue';
     let oneres = ref('');
     const showthisRes = (thisres) =>{
         oneres.value=thisres;
-        console.log(oneres.value);
     }
 
 onMounted(async()=>{

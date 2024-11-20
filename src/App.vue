@@ -9,19 +9,13 @@
         <RouterLink to="/seller">판매자페이지</RouterLink>
       </nav>
       <RouterView></RouterView>
-    </div>
-  
+  </div>
   <br>
   <Footer></Footer>
 </template>
 
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-import Main from './views/Main.vue';
-import AccDetail from './views/AccDetail.vue';
-import Reservation from './views/Reservation.vue';
-import Payment from './views/Payment.vue';
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 

@@ -87,8 +87,6 @@ const resAccom = async () => {
         console.error("숙소 정보를 불러오던 중 에러발생", error.response || error);
     }
 
-    
-
 };
 
 
@@ -97,86 +95,73 @@ const formattedCheckInDate = ref(`${checkIn.value.substring(5, 7)}월 ${checkIn.
 
 // 결제 버튼 클릭 핸들러
 const handleOrder = async () => {
-const reservationInfo = {
-    checkIn: checkIn.value,
-    checkOut: checkOut.value,
-    adultCnt: adultCnt.value,
-    kidCnt: kidCnt.value,
-    totalDays: totalDays.value,
-    totalPayment: totalPayment.value,
-
-};
-
-// try {
-//     // 예약날짜 중복체크
-//     const response = await axios.post('/reservation/chkDuplicate', reservationInfo);
-//     if (response.data === 0) {
-//     await insertReservation(reservationInfo);
-//     } else {
-//     alert('해당 날짜에는 예약이 불가능합니다.');
-//     }
-// } catch (error) {
-//     console.error('예약 중복 체크 실패:', error);
-// }
+    const reservationInfo = {
+        checkIn: checkIn.value,
+        checkOut: checkOut.value,
+        adultCnt: adultCnt.value,
+        kidCnt: kidCnt.value,
+        totalDays: totalDays.value,
+        totalPayment: totalPayment.value,
+    };
 
 
-// 예약 정보 삽입
-const insertReservation = async (reservationInfo) => {
-try {
-    await axios.post(`/reservation/insertRes?accomNum=${reservationInfo.accomNum}`, reservationInfo);
-    alert('예약이 성공적으로 완료되었습니다.');
-    processPayment();
-} catch (error) {
-    alert('예약 insert 실패');
-}
-};
+    // 예약 정보 삽입
+    const insertReservation = async (reservationInfo) => {
+        try {
+            await axios.put(`/reservation/insertRes`, reservationInfo);
+            alert('예약이 성공적으로 완료되었습니다.');
+            processPayment();
+        } catch (error) {
+            alert('예약 insert 실패');
+        }
+    };
 
-// 결제 처리 함수
-const processPayment = () => {
-const { IMP } = window;
-IMP.init('imp16048664'); // 가맹점 식별코드
-IMP.request_pay(
-    {
-    pg: 'html5_inicis',
-    pay_method: 'card',
-    merchant_uid: `merchant_${new Date().getTime()}`,
-    name: accomName.value,
-    amount: totalPayment.value,
-    buyer_email: 'amy010901@naver.com',
-    buyer_name: '수민짱',
-    buyer_tel: '010-1234-5678',
-    buyer_addr: '서울 송파구 중대로 135 it벤처타워',
-    buyer_postcode: '123-456',
-    },
-    (res) => {
-    if (res.success) {
-        const payInfo = {
-        accomNum: reservationInfo.accomNum,
-        impUid: res.imp_uid,
-        merchantUid: res.merchant_uid,
-        amount: res.paid_amount,
-        pay_Status: 'Y',
+    // 결제 처리 함수
+    const processPayment = () => {
+    const { IMP } = window;
+    IMP.init('imp16048664'); // 가맹점 식별코드
+    IMP.request_pay(
+        {
+        pg: 'html5_inicis',
+        pay_method: 'card',
+        merchant_uid: `merchant_${new Date().getTime()}`,
         name: accomName.value,
-        apply_num: res.apply_num,
-        };
-        insertPayment(payInfo);
-    } else {
-        alert(`결제에 실패하였습니다.\n실패사유: ${res.error_msg}`);
-    }
-    }
-);
-};
+        amount: totalPayment.value,
+        buyer_email: 'amy010901@naver.com',
+        buyer_name: '수민짱',
+        buyer_tel: '010-1234-5678',
+        buyer_addr: '서울 송파구 중대로 135 it벤처타워',
+        buyer_postcode: '123-456',
+        },
+        (res) => {
+        if (res.success) {
+            const payInfo = {
+            accomNum: reservationInfo.accomNum,
+            impUid: res.imp_uid,
+            merchantUid: res.merchant_uid,
+            amount: res.paid_amount,
+            pay_Status: 'Y',
+            name: accomName.value,
+            apply_num: res.apply_num,
+            };
+            insertPayment(payInfo);
+        } else {
+            alert(`결제에 실패하였습니다.\n실패사유: ${res.error_msg}`);
+        }
+        }
+    );
+    };
 
-// 결제 정보 삽입
-const insertPayment = async (payInfo) => {
-    try {
-    await axios.post(`/reservation/payment?accomNum=${payInfo.accomNum}`, payInfo);
-    alert('결제가 성공적으로 완료되었습니다.');
-    window.location.href = '/';
-    } catch (error) {
-    alert('결제 실패');
-}
-};
+    // 결제 정보 삽입
+    const insertPayment = async (payInfo) => {
+        try {
+        await axios.post(`/reservation/payment?accomNum=${payInfo.accomNum}`, payInfo);
+        alert('결제가 성공적으로 완료되었습니다.');
+        window.location.href = '/';
+        } catch (error) {
+        alert('결제 실패');
+    }
+    };
 };
 
 onMounted(() => {

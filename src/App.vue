@@ -1,11 +1,14 @@
 <template>
-  <div class="wrapper">
-    <Header></Header>
-    <nav>
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/seller">판매자페이지</RouterLink>
+    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+
+    <div class="wrapper">
+      <HelloWorld msg="You did it!" />
+      <Header></Header>
+      <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/seller">판매자페이지</RouterLink>
+      </nav>
       <RouterView></RouterView>
-    </nav>
   </div>
   <br>
   <Footer></Footer>

@@ -26,11 +26,16 @@
 </template>
 
 <script setup>
-    import {ref, onMounted } from  'vue';
+    import {ref, onMounted, defineProps } from  'vue';
     import axios from 'axios';
     import ReviewModal from './ReviewModal.vue';
     
-
+    const props = defineProps ({
+    accomNum: {
+            type: String,
+            required: true,
+        },
+})
 
     const reviewData = ref({
         list: [],  // 빈 배열로 초기화
@@ -44,7 +49,7 @@
     let page=0; // 예시
 
     onMounted(()=>{ //onMounted는 컴포넌트가 초기 렌더링될 때 한 번만 실행
-        axios.get("http://localhost:8086/review/"+num+"?page="+page+"&&size="+6)
+        axios.get("http://localhost:8086/review/"+props.accomNum+"?page="+page+"&&size="+6)
             .then((res) =>{
                 reviewData.value = res.data;
     })

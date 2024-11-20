@@ -110,6 +110,10 @@ let num = 75;
         scpAvg: 0,
         }),
     },
+    accomNum: {
+            type: String,
+            required: true,
+        },
 
 
 });   
@@ -131,7 +135,7 @@ watch(
 const modal = ref(null);
 
 const openModal = () => {
-    console.log('모달 열기');
+
     if (modal.value) {
         modal.value.style.display = 'flex';
     }
@@ -163,17 +167,17 @@ const reviewModalData = ref({
 const search = ref(''); 
 
 const searchReviews = () => {
-    console.log('검색어:', search.value); 
+
 
     reviewModalData.value.currentPage = 0;
 
     if(search.value != ''){
-        axios.get(`http://localhost:8086/review/${num}/${search.value}?page=${reviewModalData.value.currentPage}`)
+        axios.get(`http://localhost:8086/review/${props.accomNum}/${search.value}?page=${reviewModalData.value.currentPage}`)
             .then((response) => {
             reviewModalData.value = response.data;
         });
     } else {
-        axios.get(`http://localhost:8086/review/${num}?page=${reviewModalData.value.currentPage}`)
+        axios.get(`http://localhost:8086/review/${props.accomNum}?page=${reviewModalData.value.currentPage}`)
             .then((response) => {
             reviewModalData.value = response.data;
         });
@@ -183,14 +187,13 @@ const searchReviews = () => {
 
 
 onMounted(()=> {
-        axios.get(`http://localhost:8086/review/${num}`)
+        axios.get(`http://localhost:8086/review/${props.accomNum}`)
             .then((response)=>{
             reviewModalData.value= response.data;
     });
 });
 
-console.log(reviewModalData.value);
-console.log("확인  : "+ reviewModalData.value.totalPage);
+
 
 const goToPage = (page) => {
     
@@ -198,28 +201,22 @@ const goToPage = (page) => {
         reviewModalData.value.currentPage = page;
 
         if (search.value !== '') {
-            axios.get(`http://localhost:8086/review/${num}/${search.value}?page=${reviewModalData.value.currentPage}`)
+            axios.get(`http://localhost:8086/review/${props.accomNum}/${search.value}?page=${reviewModalData.value.currentPage}`)
                 .then((response) => {
                     reviewModalData.value = response.data;
                 });
         } else {
-            axios.get(`http://localhost:8086/review/${num}?page=${reviewModalData.value.currentPage}`)
+            axios.get(`http://localhost:8086/review/${props.accomNum}?page=${reviewModalData.value.currentPage}`)
                 .then((response) => {
                     reviewModalData.value = response.data;
                 });
         }
         
     }
-    console.log("클릭 이벤트");
-    console.log("현재 페이지 : " + reviewModalData.value.currentPage);
-    console.log("총 페이지 : " + reviewModalData.value.totalPage);
-    console.log(reviewModalData.value.list);
-
-    console.log("클릭한 숫자 : " + page);
 };
 
 const closeModal = () => {
-    console.log('모달 닫기');
+    
     if (modal.value) {
         modal.value.style.display = 'none';
     }

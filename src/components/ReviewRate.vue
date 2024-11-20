@@ -34,7 +34,7 @@
         </div>
 
         <hr class="review-hr">
-        <ReviewSelect></ReviewSelect>
+        <ReviewSelect :accomNum="accomNum"></ReviewSelect>
 
         <div class="reviews-section">
             <!-- 기존 리뷰 섹션 -->
@@ -47,11 +47,11 @@
     <!-- 모달을 감싸는 div를 따로 두어 모달을 배경으로 띄우는 방법 -->
    
 
-    <reviewModal ref="modalRef" :reviewRateData="reviewRateData" :ratingsData="ratingsData" />
+    <reviewModal ref="modalRef" :reviewRateData="reviewRateData" :ratingsData="ratingsData" :accomNum="accomNum" />
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted , defineProps } from 'vue';
 import axios from 'axios';
 import RatingChart from '@/components/RatingChart.vue';
 import ReviewSelect from '@/components/ReviewSelect.vue';
@@ -64,9 +64,16 @@ const ratingsData = ref('');
 
 let num = 75; // 예시
 
+const props = defineProps ({
+    accomNum: {
+            type: String,
+            required: true,
+        },
+})
+
 // 데이터 불러오기
 onMounted(() => {
-    axios.get("http://localhost:8086/review/rate/" + num)
+    axios.get("http://localhost:8086/review/rate/" + props.accomNum)
         .then((res) => {
             reviewRateData.value = res.data;
             ratingsData.value = {

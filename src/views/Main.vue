@@ -120,16 +120,18 @@ try {
 
 
 // 위시리스트 가져오기
-const fetchWishlist = async () => {
-try {
-    const { data } = await axios.get("/api/wishlist");
-    // console.log("데이터ㅓ터터터터",data);
-    return data.map((item) => item.accomNum);
-} catch (error) {
-    console.error("위시리스트를 가져오는 중 오류 발생:", error);
-    return [];
-}
-};
+// const fetchWishlist = async () => {
+// try {
+//     const { data } = await axios.get("/wish");
+//      //console.log("데이터ㅓ터터터터 : ",data);
+//     return data.map((item) => item.accomNum);
+// } catch (error) {
+//     console.error("위시리스트를 가져오는 중 오류 발생:", error);
+//     return [];
+// }
+// };
+
+
 
 // 위시리스트에 추가/삭제
 const toggleWishlist = async (accomNum, event) => {

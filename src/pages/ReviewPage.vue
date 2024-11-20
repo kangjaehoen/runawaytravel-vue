@@ -1,6 +1,6 @@
 <template>
 <div>
-    <ReviewRate></ReviewRate>
+    <ReviewRate :accomNum="accomNum"></ReviewRate>
     <RatingChart></RatingChart>
 </div>
 </template>
@@ -17,6 +17,10 @@
         },
         reviewData : {
             type : Object,
+            required: true,
+        },
+        accomNum: {
+            type: String,
             required: true,
         },
     });

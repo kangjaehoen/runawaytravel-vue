@@ -6,7 +6,6 @@
         
       <Header></Header>
       <nav>
-        <RouterLink to="/reviewInsert">리뷰 등록</RouterLink>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/seller">판매자페이지</RouterLink>
       </nav>

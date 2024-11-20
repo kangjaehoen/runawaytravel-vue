@@ -1,11 +1,13 @@
 <template>
    <div>
+        <ReviewInsertAccomInfo></ReviewInsertAccomInfo>
         <ReviewInsert></ReviewInsert>
     </div>
 </template>
 
 <script setup>
     import ReviewInsert from '@/components/ReviewInsert.vue';
+    import ReviewInsertAccomInfo from '@/components/ReviewInsertAccomInfo.vue'
 
 </script>
 

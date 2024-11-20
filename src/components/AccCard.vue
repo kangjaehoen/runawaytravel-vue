@@ -3,12 +3,14 @@
         <table>
             <tbody>
                 <tr>
-                    <td><img class="accimg" src="/ocean.jpg"></td>
+                    <td>
+                        <img class="accimg" :src="accomimg?`/images/${accomimg.filePath}`:'/ocean.jpg'">
+                    </td>
                 </tr>
                 <tr>
                     <td>
                         <p>{{ accom.accName }}</p>
-                        <P>{{ accom.address }}</P>
+                        <p>{{ accom.address }}</p>
                         <p>￦ {{ accom.price }}</p>
                     </td>
                 </tr>
@@ -20,20 +22,14 @@
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
 
- const p = defineProps({
-    accomNum : Number,
+ const param = defineProps({
+    accom : Object,
  });
-const accom = ref(null);
 const accomimg = ref(null);
 const review = ref(null);
 onMounted(async()=>{
     await axios
-    .get(`http://localhost:8086/getaccominformation?accomNum=${p.accomNum}`)
-    .then((response)=>{
-        accom.value=response.data;
-    })
-    await axios
-    .get(`http://localhost:8086/getaccomimage?accomNum=${p.accomNum}`)
+    .get(`http://localhost:8086/getaccomimage?accomNum=${param.accom.accomNum}`)
     .then((response)=>{
         accomimg.value=response.data
     })

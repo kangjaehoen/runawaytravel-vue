@@ -28,6 +28,7 @@ const getrandaccom = () =>{
         randaccom.splice(0,randaccom.length, ...response.data.getContent);
     })
 }
+
 const searchacc = (e) =>{
     axios
     .get(`http://localhost:8086/search?key=${e}`)
@@ -37,6 +38,7 @@ const searchacc = (e) =>{
 }
 const goDetailPage = (accnum) =>{
     router.push(`/accDetail/${accnum}`)
+
 }
 
 onMounted(()=>{

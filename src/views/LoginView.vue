@@ -63,10 +63,11 @@
           .then((res) => {
         const token = res.headers["authorization"];
         if (token) {
-        sessionStorage.setItem("token", token);
+          localStorage.setItem('alphabet', {a,b,c})
+        localStorage.setItem("token", token);
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    
-      }router.push({ name: "Main" });
+      }
+      router.push({ name: "Main" });
 })
           .catch((error) => {
             // 상태 코드 및 에러 메시지 출력

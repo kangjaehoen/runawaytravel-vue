@@ -269,12 +269,14 @@ const accomNum = route.params.accomNum;
 const updateCheckIn = async (value) => {
   checkIn.value = value;  // 선택한 값을 반영
   await nextTick(); // 렌더링 후 값 반영 확인
+  calculateDays();
   console.log('체크인 날짜 업데이트:', checkIn.value);
 };
 
 const updateCheckOut = async (value) => {
   checkOut.value = value;  // 선택한 값을 반영
   await nextTick(); // 렌더링 후 값 반영 확인
+  calculateDays();
   console.log('체크아웃 날짜 업데이트:', checkOut.value);
 };
 
@@ -316,7 +318,7 @@ if (checkIn.value && checkOut.value) {
 
 
     const timeDifference = date2.getTime() - date1.getTime();
-    const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+    const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
     // totalDays.value = daysDifference;
     totalDays.value = daysDifference > 0 ? daysDifference : 0;
     updatePrice(totalDays.value);

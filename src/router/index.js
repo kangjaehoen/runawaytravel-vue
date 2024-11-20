@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import ReviewPage from '@/pages/ReviewPage.vue'
-import ReviewInsertPage from '@/pages/ReviewInsertPage.vue'
 import SellerMenu from '@/pages/SellerMenu.vue'
 import MyAcc from '@/pages/MyAcc.vue'
 import AccReg from '@/pages/AccReg.vue'
@@ -16,8 +14,6 @@ import Payment from '@/views/Payment.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/ReviewPage', component:ReviewPage},
-    { path: '/reviewInsert/:accomNum', component:ReviewInsertPage},
     { path: '/aa', name: 'home', component: HomeView },
     { path: '/seller', name : 'seller', component : SellerMenu,
       children : [

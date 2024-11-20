@@ -47,7 +47,7 @@
                 </div>
             </div>
         </div>
-
+        
     <div class="comment-section">
         <h3>공개 후기 (필수항목)</h3>
         <textarea
@@ -74,7 +74,7 @@
 
 <script setup>
     import axios from 'axios';
-    import { reactive, ref } from 'vue';
+    import { reactive, ref , defineProps } from 'vue';
 
     const reviewContent = ref("");
 
@@ -82,6 +82,14 @@
     const accuracy = ref(0);  
     const clean = ref(0);  
     const scp = ref(0);  
+
+    const props = defineProps({
+        accomNum: {
+            type: String,
+            required: true,
+        },
+    })
+    console.log("확인 url 값 : "+props.accomNum);
 
     const satisfyStar = (event) => {
         const value = parseInt(event.target.getAttribute('data-value'), 10);
@@ -116,7 +124,7 @@
         }
 
         const reviewData = reactive({
-            accomNum: 75, // 숙소 번호
+            accomNum: props.accomNum, // 숙소 번호
             username: 'testID', // 사용자 ID
             satisfy: satisfy.value,
             accuracy: accuracy.value,

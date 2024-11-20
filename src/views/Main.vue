@@ -21,13 +21,13 @@ import axios from "axios";
 import { onMounted, reactive, ref } from "vue";
 const randaccom = reactive([]);
 const searchtext = ref('');
-const getrandaccom = () =>{
-    axios
-    .get("http://localhost:8086/getrandom")
-    .then((response)=>{
-        randaccom.splice(0,randaccom.length, ...response.data.getContent);
-    })
-}
+// const getrandaccom = () =>{
+//     axios
+//     .get("http://localhost:8086/getrandom")
+//     .then((response)=>{
+//         randaccom.splice(0,randaccom.length, ...response.data.getContent);
+//     })
+// }
 
 const searchacc = (e) =>{
     axios

@@ -7,12 +7,12 @@
         
       <Header></Header>
       <nav>
-        <RouterLink to="/">Home</RouterLink>
+        <!-- <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/seller">판매자페이지</RouterLink>
         <RouterLink to="/">Main</RouterLink>
         <RouterLink to="/login">Login</RouterLink>
         <RouterLink to="/logout">Logout</RouterLink>
-        <RouterLink to="/join">Join</RouterLink>
+        <RouterLink to="/join">Join</RouterLink> -->
       </nav>
       <RouterView></RouterView>
   </div>
@@ -27,6 +27,7 @@ import { ref } from 'vue';
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 </script>
+
 
 <style scoped>
 header {

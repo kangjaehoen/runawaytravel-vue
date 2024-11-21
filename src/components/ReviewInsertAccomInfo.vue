@@ -21,6 +21,7 @@
 import { ref, onMounted, watch, nextTick, computed  } from 'vue';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
+import { jwtDecode } from "jwt-decode";
 
 const route = useRoute(); 
 const accomNum = route.params.accomNum; 

@@ -49,12 +49,16 @@
     let page=0; // 예시
 
     onMounted(()=>{ //onMounted는 컴포넌트가 초기 렌더링될 때 한 번만 실행
+        const token = localStorage.getItem("token");
+        console.log('Token', token);
+        
         axios.get("http://localhost:8086/review/"+props.accomNum+"?page="+page+"&&size="+6)
             .then((res) =>{
                 reviewData.value = res.data;
     })
     console.log(reviewData.value);
 })
+
 </script>
 
 <style>

@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <button class="w-100 btn btn-lg btn-warning" @click="logout">로그아웃</button>
   </template>
   
@@ -17,7 +17,7 @@
             .get("http://localhost:8086/logout")
             .then((res) => {
               if (res.headers["authorization"] === "delete") {
-                localStorage.removeItem("token");
+                sessionStorage.removeItem("token");
                 window.alert("로그아웃 되었습니다.");
                 this.$router.push({ name: "main" });
               } else {
@@ -35,4 +35,4 @@
       return { logout };
     },
   };
-</script>
+</script> -->

@@ -1,8 +1,8 @@
-<!-- <template>
-    <button class="w-100 btn btn-lg btn-warning" @click="logout">로그아웃</button>
+<template>
+    <button class="w-100 btn btn-lg btn-warning" >로그아웃</button>
   </template>
-  
-  <script>
+  <!-- 
+  <script>@click="logout"
   import axios from "axios";
 
   axios.defaults.withCredentials = true;

@@ -63,7 +63,7 @@
           .then((res) => {
           const token = res.headers.get('Authorization');
           if (token) {
-            sessionStorage.setItem("token", token);
+            localStorage.setItem("token", token);
             axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
           }
           router.push({ name: "main" });

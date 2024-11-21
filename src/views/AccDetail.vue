@@ -78,7 +78,8 @@
                     :disabled-date="isDisabledDate"
                     format="YYYY-MM-DD"
                     :locale="ko"
-                />    
+                />   
+                <p :value="formattedCheckIn">{{formattedCheckIn }}</p>
                 </div>
                 <div class="form-group">
                 <label for="checkOut" class="form-label">체크아웃</label><br />
@@ -89,6 +90,7 @@
                     format="YYYY-MM-DD"
                     :locale="ko"
                 />
+                <p :value="formattedCheckOut">{{formattedCheckOut }}</p>
                 </div>
                 <div class="form-group">
                 <label class="form-label" @click="toggleGuestCounter"> <!-- 폰트크기때문에 form-control 에서 from-label로 변경  -->
@@ -139,8 +141,10 @@
                     * 어린이는 2세 ~ 12세까지를 기준으로 하며<br> 13세 이상은 성인요금이 부여됩니다.
                 </p>
             </div>
+
             </div>
         </div>
+
         </div>
     </div>
 
@@ -159,6 +163,7 @@ import ko from 'vue-datepicker-next/locale/ko';
 import ConvenienceItem from '@/components/ConvenienceItem.vue';
 import GuestCounter from '@/components/GuestCounter.vue';
 import axios from 'axios';
+
 
 // 숙소 정보 로드 함수
 const accomInfo = async () => {
@@ -187,16 +192,18 @@ const onDateChange = (value) => {
 
 
 const isDisabledDate = (date) => {
-    const formattedDate = date.toISOString().split('T')[0];
+    const formattedDate = dayjs(date).format('YYYY-MM-DD');
 
     // reservation 배열에서 체크인-체크아웃 날짜 범위를 확인
     return reservation.value.some((res) => {
-    const checkInDate = new Date(res.chkin_Date);
-    const checkOutDate = new Date(res.chkout_Date);
+        const checkInDate = dayjs(res.chkin_Date);
+        const checkOutDate = dayjs(res.chkout_Date);
 
     // 체크인 날짜 <= 선택 날짜 < 체크아웃 날짜
-    return formattedDate >= checkInDate.toISOString().split('T')[0] &&
-            formattedDate < checkOutDate.toISOString().split('T')[0]; // 체크아웃 날짜는 선택 가능
+    return (
+        formattedDate >= checkInDate.format('YYYY-MM-DD') &&
+        formattedDate < checkOutDate.format('YYYY-MM-DD')
+        );
     }); 
 };
 
@@ -230,18 +237,9 @@ const reviewList = ref([]);
 const revCnt = ref(0);
 const revRate = ref(null);
 
-// const checkIn = ref(new Date());
-// const checkOut = ref(new Date(new Date().setDate(new Date().getDate() + 1)));
-
 const checkIn= ref(null);
 const checkOut= ref(null);
 
-// const checkIn = ref(dayjs().format('YYYY-MM-DD'));  // 초기값을 문자열로 설정
-// const checkOut = ref(dayjs().add(1, 'day').format('YYYY-MM-DD'));
-
-//날짜 포맷팅
-// const formattedCheckIn =computed(() => dayjs(checkIn.value).format('YYYY-MM-DD'));
-// const formattedCheckOut =computed(() => dayjs(checkOut.value).format('YYYY-MM-DD'));
 
 const reservation = ref([]);
 const adultCnt = ref(1);
@@ -254,19 +252,8 @@ const guestCounterVisible = ref(true);
 const route = useRoute();
 const accomNum = route.params.accomNum;
 
-// const updateCheckIn = (value) => {
-//   checkIn.value = value;
-//   console.log('체크인 날짜 업데이트:', value);
-// };
-
-// const updateCheckOut = (value) => {
-//   checkOut.value = value;
-//   console.log('체크아웃 날짜 업데이트:', value);
-// };
-
-
 const updateCheckIn = async (value) => {
-  checkIn.value = value;  // 선택한 값을 반영
+ checkIn.value = value;  // 선택한 값을 반영
   await nextTick(); // 렌더링 후 값 반영 확인
   calculateDays();
   console.log('체크인 날짜 업데이트:', checkIn.value);

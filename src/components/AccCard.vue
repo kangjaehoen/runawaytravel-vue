@@ -51,24 +51,34 @@ const loadimg = async () => {
 };
 
 
-  const heart = async () => { 
-    axios.get("http://localhost:8086/wish") // 유저 값 나중에 추가해줘야함.
+const heart = async () => { 
+    const token = localStorage.getItem("token");
+    console.log('Token', token);  // 문제가 없으면 이 줄은 정상적으로 실행됩니다.
+
+    if (token) {
+        axios.get("http://localhost:8086/wish", {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                Authorization: `Bearer ${token}`,  // 템플릿 리터럴 사용하여 토큰 포함
+            }
+        })
         .then((response)=>{
             const isWishlisted = response.data.some((item) => 
                 item.accomNum.accomNum === param.accom.accomNum
             );
-
-
             if (isWishlisted) {
                 heartImage.value = "/images/FullLove.png";
             } else {
                 heartImage.value = "/images/EmptyLove.png";
             }
         })
-        .catch((error) => {
-            console.error("Error fetching wishlist:", error);
+        .catch(error => {
+            console.error("Failed to fetch accommodation list:", error);
         });
-    } 
+    } else {
+        console.log("No token found");
+    }
+};
 
 
 
@@ -85,12 +95,15 @@ watch(
 );
 
 const clickHeart = (accomNum) =>{
+    const token = localStorage.getItem("token");
     event.stopPropagation();
     if(heartImage.value === "/images/EmptyLove.png"){
         if(wishListInsert.value){
             wishListInsert.value.clickHeart(accomNum); // 메서드 이름은 예시입니다.
         }
-        heartImage.value = "/images/FullLove.png";
+        if(token != null){
+            heartImage.value = "/images/FullLove.png";
+        }
     }else{
         if(wishListDelete.value){
             wishListDelete.value.clickHeart(accomNum);

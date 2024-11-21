@@ -125,7 +125,6 @@
 
         const reviewData = reactive({
             accomNum: props.accomNum, // 숙소 번호
-            username: 'testID', // 사용자 ID
             satisfy: satisfy.value,
             accuracy: accuracy.value,
             clean: clean.value,
@@ -135,15 +134,37 @@
         console.log("reviewData: ", reviewData);
         
 
-        const response = await axios.post("http://localhost:8086/review", reviewData );
-        if (response.status === 200) {
-            alert("리뷰가 등록되었습니다.");
-        } else {
-            alert("리뷰 등록에 실패했습니다.");
+        const token = localStorage.getItem("token");
+        console.log('Token', token);
+        if (!token) {
+            alert("로그인이 필요합니다. 토큰이 없습니다.");
+            console.log("No token found.");
+            return;
+        }
+
+        try {
+            // POST 요청
+            const response = await axios.post(
+                "http://localhost:8086/review",
+                reviewData, // 리뷰 데이터
+                {
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        Authorization: `Bearer ${token}`, // Authorization 헤더 추가
+                    },
+                }
+            );
+            if (response.status === 200) {
+                alert("리뷰가 등록되었습니다.");
+            } else {
+                alert("리뷰 등록에 실패했습니다.");
+            }
+        } catch (error) {
+            console.error("리뷰 등록 중 오류 발생:", error);
+            alert("리뷰 등록 중 문제가 발생했습니다.");
         }
     };
 </script>
 
 <style>
-
 </style>

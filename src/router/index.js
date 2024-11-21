@@ -8,6 +8,7 @@ import Reservation from '@/views/Reservation.vue';
 import Payment from '@/views/Payment.vue';
 import SellerPage from '@/pages/SellerPage.vue';
 import ReviewInsertPage from '@/pages/ReviewInsertPage.vue';
+import Wishlist from '@/views/WishList.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,7 +24,8 @@ const router = createRouter({
     { path: '/accDetail/:accomNum', name:'accDetail', component: AccDetail, props:true},
     { path: '/reservation', name:'reservation', component: Reservation},
     { path: '/payment', name:'payment', component: Payment},
-	 { path: '/reviewInsertPage/:accomNum', component:ReviewInsertPage}
+	  { path: '/reviewInsertPage/:accomNum', component:ReviewInsertPage},
+    { path: '/wishlist', name :'wishlist', component:Wishlist}
   ],
 })
 

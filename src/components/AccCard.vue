@@ -40,11 +40,21 @@ const wishListInsert = ref();
 const wishListDelete = ref();
 
 const loadimg = async () => {
-    if (param.accom && param.accom.accomNum) {
+    const token = localStorage.getItem("token");
+    if (param?.accom?.accomNum) {
         try {
-            const response = await axios.get(`http://localhost:8086/getaccomimage?accomNum=${param.accom.accomNum}`);
+            const response = await axios.get(
+                `http://localhost:8086/getaccomimage?accomNum=${param.accom.accomNum}`,
+                {
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             accomimg.value = response.data;
-        } catch {
+        } catch (error) {
+            console.error("Failed to load accommodation image:", error);
             accomimg.value = null;
         }
     }

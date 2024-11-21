@@ -1,37 +1,44 @@
 <template>
-    <input v-model="state.Search" @keyup.enter="searchmine"></input>
-    <br>
-    <button @click="checkedonsalechange">판매상태 변경</button>
-    <button @click="checkedaccdelete">삭제하기</button>
-    <table class="myacctable">
-        <thead>
-            <tr>
-                <td><input type="checkbox" @change="checkchange($event)"></td>
-                <td>숙소명</td>
-                <td>주소</td>
-                <td>기본가격</td>
-                <td>초과가격</td>
-                <td>카테고리</td>
-                <td>유형</td>
-                <td>판매상태</td>
-            </tr>
-        </thead>
-        <tbody v-if="state.Acclist.length > 0">
-            <tr v-for="(row, index) in state.Acclist" :key="row.accomNum">
-                <td><input type="checkbox" v-model="state.checkboxs[index]"></td>
-                <td @click="loadAcc(row.accomNum)">{{ row.accName }}</td>
-                <td>{{ row.address }} {{ row.detailAddress }}</td>
-                <td>{{ row.price }}</td>
-                <td>{{ row.kidPrice }}</td>
-                <td>{{ row.category }}</td>
-                <td>{{ row.accType }}</td>
-                <td>{{ salestatus[row.onSale] }}</td>                
-            </tr>
-        </tbody>
-    </table>
-    <br>
-    <div class="pagination">
-    <button v-on:click="previouspage">이전</button><span>{{ Currentpage +1 }}</span> / <span>{{ state.Totalpage }}</span><button @click="nextpage">다음</button>
+    <div class="sellerContainer">
+        <div class="sellerController">
+            <input v-model="state.Search" @keyup.enter="searchmine" class="searchbarmyacc"></input>
+        </div>
+        <div style="width: 1200px;">
+            <button @click="checkedonsalechange" class="greenbutton" style="float: right;">판매상태 변경</button>
+        </div>
+        <div class="myacctablecontainer">
+        <br><br>
+            <table class="myacctable">
+            <thead>
+                <tr>
+                    <td><input type="checkbox" @change="checkchange($event)"></td>
+                    <td>숙소명</td>
+                    <td>주소</td>
+                    <td>기본가격 / 초과가격</td>
+                    <td>기본인원 / 최대인원</td>
+                    <td>카테고리</td>
+                    <td>유형</td>
+                    <td>판매상태</td>
+                </tr>
+            </thead>
+            <tbody v-if="state.Acclist.length > 0">
+                <tr v-for="(row, index) in state.Acclist" :key="row.accomNum">
+                    <td><input type="checkbox" v-model="state.checkboxs[index]"></td>
+                    <td @click="loadAcc(row.accomNum)" class="accname">{{ row.accName }}</td>
+                    <td>{{ row.address }} {{ row.detailAddress }}</td>
+                    <td>{{ row.price.toLocaleString('en-US') }} 원<br>어린이 {{ row.kidPrice.toLocaleString('en-US') }} 원 , 성인 {{ row.adultPrice.toLocaleString('en-US') }} 원</td>
+                    <td>{{ row.occ }} 명 / {{ row.maxocc }} 명</td>
+                    <td>{{ row.category }}</td>
+                    <td>{{ row.accType }}</td>
+                    <td>{{ salestatus[row.onSale] }}</td>                
+                </tr>
+            </tbody>
+        </table>
+        </div>
+        <br>
+        <div class="sellerController">
+            <button v-on:click="previouspage">이전</button><span>{{ Currentpage +1 }} / {{ state.Totalpage }}</span><button @click="nextpage">다음</button>
+        </div>
     </div>
 </template>
 <script setup>
@@ -108,21 +115,15 @@ const checkedonsalechange = async() =>{
     }
     getData();
 }
-const checkedaccdelete = async()=>{
-    if(checklist.value.length !=0){
-        let param = checklist.value.join(",");
-        await axios
-        .delete(`http://localhost:8086/deleteacclist?accomNumList=${param}`)
-        .then((response)=>{console.log(response.data)});
-    }
-    getData();
-}
 
 onMounted(() => {
   getData();
 });
 </script>
-<style>
+<style scoped>
+    .myacctablecontainer{
+        min-height: 600px;
+    }
     .myacctable{
         background-color: cornsilk;
         text-wrap: nowrap;
@@ -136,7 +137,9 @@ onMounted(() => {
         text-wrap: nowrap;
     }
     .myacctable td{
-        min-width: 120px;
+        min-width: 130px;
+        min-height: 50px;
+        text-align: center;
     }
     .myacctable tr td:nth-of-type(1),
     .myacctable thead tr td:nth-of-type(1) {
@@ -146,5 +149,18 @@ onMounted(() => {
     }
     .myacctable tr:nth-of-type(2n){
         background-color: wheat;
+    }
+    .searchbarmyacc{
+        display: flex;
+        background-color: #ffffff;
+        width : 400px;
+        height: 70px;
+        border: 1px solid #ccc;
+        border-radius: 50px;
+        padding: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .accname{
+        cursor: pointer;
     }
 </style>

@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import SellerMenu from '@/pages/SellerMenu.vue'
 import MyAcc from '@/pages/MyAcc.vue'
 import AccReg from '@/pages/AccReg.vue'
 import SellerCalendar from '@/pages/SellerCalendar.vue'
@@ -7,13 +6,12 @@ import Main from '../views/Main.vue';
 import AccDetail from '@/views/AccDetail.vue';
 import Reservation from '@/views/Reservation.vue';
 import Payment from '@/views/Payment.vue';
-
-
+import SellerPage from '@/pages/SellerPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/seller', name : 'seller', component : SellerMenu,
+    { path: '/seller', name : 'seller', component : SellerPage,
       children : [
         { path: 'myacc', name : 'myacc', component: MyAcc },
         { path: 'accreg', name : 'accreg', component: AccReg},

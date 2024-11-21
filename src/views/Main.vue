@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="maincontainer">
     <div class="search-bar-container">
         <div class="search-bar">
             <input type="text" v-model="searchtext" placeholder="검색할 내용을 입력해주세요." required @keyup.enter="searchacc(searchtext)">
@@ -9,30 +9,68 @@
         </div>
     </div>
     <br>
+    <div class="stretchedContainer">
+        <div class="box" style="text-align: center;">
+        <AccCardStretched :accom="accoms[0]" @click="goDetailPage(accoms[0])"></AccCardStretched>
+        </div>
+    </div>
     <div class="accomCardContainer">
-    <AccCard v-if="randaccom.length > 0" v-for="accom in randaccom" :accom="accom" @click="goDetailPage(accom.accomNum)"></AccCard>
+        <button @click="pagedown()" class="mainbutton">&lt</button>
+        <div class="box">
+            <AccCard v-if="accoms.length > 0" v-for="accom in accoms" :accom="accom" @click="goDetailPage(accom.accomNum)"></AccCard>
+        </div>
+        <button @click="pageup()" class="mainbutton">&gt</button>
     </div>
 </div>
+{{ page +1  }} / {{ totalpage }}
 </template>
 <script setup>
 import AccCard from "@/components/AccCard.vue";
+import AccCardStretched from "@/components/AccCardStretched.vue";
 import router from "@/router";
 import axios from "axios";
 import { onMounted, reactive, ref } from "vue";
-const randaccom = reactive([]);
+const accoms = reactive([]);
 const searchtext = ref('');
-const getrandaccom = () =>{
-    axios
-    .get("http://localhost:8086/getrandom")
+const searched = ref('');
+const page = ref(0);
+const totalpage = ref(1);
+const pageup = () =>{
+    if(page.value < totalpage.value -1 ){
+        page.value++;
+    } else {
+        page.value = 0;
+    }
+    searchacc2(searched.value);
+}
+const pagedown = () =>{
+    if(page.value > 0){
+        page.value--;
+    } else {
+        page.value = totalpage.value - 1;
+    }
+    searchacc2(searched.value);
+}
+const getrandomaccoms = async() =>{
+    await axios
+    .get(`http://localhost:8086/getrandom?page=${page.value}`)
     .then((response)=>{
-        randaccom.splice(0,randaccom.length, ...response.data.getContent);
+        accoms.splice(0,accoms.length, ...response.data.getContent);
+        totalpage.value=response.data.getTotalPages;
     })
 }
-const searchacc = (e) =>{
+const searchacc = (key) =>{
+    page.value = 0;
+    searched.value = key;
+    searchacc2(key);
+}
+
+const searchacc2 = async(key) =>{
     axios
-    .get(`http://localhost:8086/search?key=${e}`)
+    .get(`http://localhost:8086/search?key=${key}&page=${page.value}`)
     .then((response)=>{
-        randaccom.splice(0,randaccom.length, ...response.data.getContent);
+        accoms.splice(0,accoms.length, ...response.data.getContent);
+        totalpage.value=response.data.getTotalPages;
     })
 }
 const goDetailPage = (accnum) =>{
@@ -40,21 +78,35 @@ const goDetailPage = (accnum) =>{
 }
 
 onMounted(()=>{
-    getrandaccom(searchtext.value);
+    getrandomaccoms();
 })
 </script>
-
 <style scoped>
     .accomCardContainer{
         display: flex;
         min-width: 1200px;
+        height: 330px;
     }
     .search-bar-container {
         display: flex;
         justify-content: center;
         align-items: center;
         margin: 20px 0;
-
+    }
+    .maincontainer{
+        min-height: 1000px;
+    }
+    .mainbutton{
+        height: 100%;
+        border: 0;
+        background-color: transparent;
+    }
+    .mainbutton:hover{
+        background-color: #B2D055;
+        transition: 3s;
+    }
+    .box{
+        width: 1250px;
     }
 
     /* 검색바 스타일 */

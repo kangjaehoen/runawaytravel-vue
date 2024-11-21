@@ -9,9 +9,8 @@
                 </tr>
                 <tr>
                     <td>
-                        <p class="textshorten">{{ accom.accName }}</p>
-                        <p class="textshorten">{{ accom.address }}</p>
-                        <p>￦ {{ accom.price }}</p>
+                        <h1 class="textshorten">{{ accom.accName }}</h1>
+                        <p class="textshorten">{{ accom.address }} ￦ {{ accom.price }}</p>  
                     </td>
                 </tr>
             </tbody>
@@ -58,11 +57,11 @@ watch(
         background-color: bisque;
     }
     .accimg{
-        width: 200px;
-        height: 200px;
+        width: 1150px;
+        height: 400px;
     }
     .textshorten{
-        width: 200px;
+        width: 1200px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis; 

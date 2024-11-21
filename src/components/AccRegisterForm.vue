@@ -1,6 +1,7 @@
 <template>
 <form ref="regform" class="regform">
     <fieldset>
+
         <!--제출했을 때 username으로 해당 accomNum을 가지고 있는지 확인하는 알고리즘이 필요해보임. 안그러면 클라를 조작할 수 있잖아-->
         {{ accomNum }}
         <legend>상품명</legend>

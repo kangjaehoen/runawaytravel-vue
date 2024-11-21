@@ -18,15 +18,15 @@ import Menu from './Menu.vue';
 
 <style>
 .header {
-    display: flex;
-    justify-content: space-between;
-    min-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  min-width: 1200px;
 }
 
 .logo img {
 width: 120px;
 }
 .headerRight{
-  display: flex;
+display: flex;
 }
 </style>

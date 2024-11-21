@@ -61,14 +61,13 @@
             },
           })
           .then((res) => {
-        const token = res.headers["authorization"];
-        if (token) {
-          localStorage.setItem('alphabet', {a,b,c})
-        localStorage.setItem("token", token);
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      }
-      router.push({ name: "Main" });
-})
+          const token = res.headers.get('Authorization');
+          if (token) {
+            sessionStorage.setItem("token", token);
+            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+          }
+          router.push({ name: "main" });
+          })
           .catch((error) => {
             // 상태 코드 및 에러 메시지 출력
             console.error("Login error:", error.response?.data || error.message);

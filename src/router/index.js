@@ -10,9 +10,9 @@ import Main from '../views/Main.vue';
 import AccDetail from '@/views/AccDetail.vue';
 import Reservation from '@/views/Reservation.vue';
 import Payment from '@/views/Payment.vue';
-import MainView from '../views/MainView.vue';
    import LoginView from '../views/LoginView.vue';
    import JoinView from '../views/JoinView.vue';
+   import Logout from '../views/Logout.vue';
 
 
 
@@ -20,7 +20,6 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/reviewInsert/:accomNum', component:ReviewInsertPage},
-
     { path: '/seller', name : 'seller', component : SellerMenu,
       children : [
         { path: 'myacc', name : 'myacc', component: MyAcc },
@@ -33,11 +32,6 @@ const router = createRouter({
     { path: '/reservation', name:'reservation', component: Reservation},
     { path: '/payment', name:'payment', component: Payment},
     {
-      path: "/",
-      name: "Main",
-      component: MainView,
-    },
-    {
       path: "/login",
       name: "Login",
       component: LoginView,
@@ -48,6 +42,11 @@ const router = createRouter({
       name: "Join",
       component: JoinView,
     },
+    {
+      path: "/logout",
+      name: "Logout",
+      component: Logout,
+    }
   ],
 })
 function isAuthenticated() {

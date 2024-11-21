@@ -49,6 +49,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
+import { jwtDecode } from "jwt-decode";
 
 const route= useRoute();
 
@@ -60,6 +61,7 @@ const adultCnt = ref(route.query.adultCnt);
 const kidCnt = ref(route.query.kidCnt);
 const totalDays = ref(route.query.totalDays);
 const totalPayment = ref(route.query.totalPayment);
+
 const revCnt= ref(0);
 const revRate= ref('');
 const accom= ref({});
@@ -98,7 +100,7 @@ let reservInfo= {};
 
 // 결제 버튼 클릭 핸들러
 const handleOrder = async () => {
-   
+
     reservationInfo.value = {
         checkIn: checkIn.value,
         checkOut: checkOut.value,
@@ -121,8 +123,14 @@ const handleOrder = async () => {
  // 예약 정보 삽입
 const insertReservation = async (reservationInfo) => {
     try {
-        const response= await axios.put(`http://localhost:8086/reservation/insertRes`, reservationInfo);
-        
+        const response= await axios.put(`http://localhost:8086/reservation/insertRes`, reservationInfo,{
+            // headers: {
+            //         "X-Requested-With": "XMLHttpRequest",
+            //         Authorization: `${token}`, // Authorization 헤더 추가
+            //     },
+            }
+        );
+
         if(response && response.data){
             reservationInfo.resNum=response.data.resNum;
             alert('예약이 성공적으로 완료되었습니다.');
@@ -130,6 +138,7 @@ const insertReservation = async (reservationInfo) => {
         }
     } catch (error) {
         alert('예약에 실패했습니다.');
+        console.error("Error:", error);
         return false;
     }
 };
@@ -194,6 +203,7 @@ window.IMP.request_pay(
 onMounted(() => {
     resAccom();
 });
+
 </script>
 
 <style scoped>

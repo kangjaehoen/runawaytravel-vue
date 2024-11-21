@@ -6,7 +6,7 @@
     <table class="myacctable">
         <thead>
             <tr>
-                <td><input type="checkbox" @change="checkchange($event)"></td>
+                <td><input type="checkbox" @change="checkchange($event)"/></td>
                 <td>숙소명</td>
                 <td>주소</td>
                 <td>기본가격</td>
@@ -35,9 +35,10 @@
     </div>
 </template>
 <script setup>
-    import router from '@/router';
+    import { useRouter } from 'vue-router';
     import axios from 'axios';
     import { computed, onMounted, reactive, ref } from 'vue';
+    import { jwtDecode } from 'jwt-decode';
 const state = reactive({
     Acclist : [],
     Totalpage : "",
@@ -64,20 +65,34 @@ const searchmine = () =>{
     getData();
 }
 
-const getData = ()=>{
-    axios
-    .post('http://localhost:8086/myaccomtable',{
-        key : state.Search,
-        page : Currentpage.value,
-    })
-    .then((response)=>{
-        state.Acclist = response.data.content;
-        state.Totalpage = response.data.totalPages;
-        state.Totalelement = response.data.totalElements;
-    })
-    .catch((error)=>{
-        console.error('데이터를 가져오던 중 에러 발생',error);
-    });
+const router = useRouter();
+
+const getData = () => {
+    const token = localStorage.getItem("token");
+    console.log('Token', token);
+    
+    if (token) {
+        axios
+            .post('http://localhost:8086/myaccomtable', {
+                key: state.Search,
+                page: Currentpage.value,
+            }, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    Authorization: `${token}`,
+                }
+            })
+            .then((response) => {
+                state.Acclist = response.data.content;
+                state.Totalpage = response.data.totalPages;
+                state.Totalelement = response.data.totalElements;
+            })
+            .catch((error) => {
+                console.error('데이터를 가져오던 중 에러 발생', error);
+            });
+    } else {
+        console.log("No token found");
+    }
 };
 
 const loadAcc = (number) =>{

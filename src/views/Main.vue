@@ -1,7 +1,11 @@
 <template>
 <div>
+    <div v-if="username">
+      반갑습니다. {{ username }}님
+    </div>
     <div class="search-bar-container">
         <div class="search-bar">
+            
             <input type="text" v-model="searchtext" placeholder="검색할 내용을 입력해주세요." required @keyup.enter="searchacc(searchtext)">
             <button type="button" @click="searchacc(searchtext)">
                 <img id="searchButton" src="../../images/searchbtn.png" />
@@ -16,9 +20,11 @@
 </template>
 <script setup>
 import AccCard from "@/components/AccCard.vue";
-import router from "@/router";
+import { useRouter } from 'vue-router';
 import axios from "axios";
 import { onMounted, reactive, ref } from "vue";
+import { jwtDecode } from "jwt-decode";
+
 const randaccom = reactive([]);
 const searchtext = ref('');
 // const getrandaccom = () =>{
@@ -41,9 +47,32 @@ const goDetailPage = (accnum) =>{
 
 }
 
-onMounted(()=>{
-    getrandaccom(searchtext.value);
-})
+// onMounted(()=>{
+//     getrandaccom(searchtext.value);
+// })
+
+
+
+const username = ref("");
+const router = useRouter();
+
+onMounted(() => {
+
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token); //토큰 디코딩
+      username.value = decodedToken.username; //유저이름 꺼내기
+    } catch (error) {
+      console.error("Invalid token:", error); 
+      router.push("/login");//에러나면 로그인페이지로
+    }
+  } else {
+    console.log("No token found");
+    router.push("/login"); // 토큰을 못찾을때도 로그인페이지로
+  }
+});
 </script>
 
 <style scoped>

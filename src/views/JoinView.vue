@@ -71,7 +71,7 @@
           }
         } catch (error) {
           this.message = '서버와의 연결이 실패했습니다.';
-          console.error('Error during registration:', error);
+          console.error('회원가입 중 에러 ', error);
         }
       },
     },

@@ -131,8 +131,15 @@ const url = (e,url) =>{
     if (e.target.value=='수정하기' && !isNaN(Number(accomNum.value))){
         formdata.append("accomNum" , accomNum.value);
     }
+    const token = sessionStorage.getItem("token");
+    if(token){
     axios
-    .post(`http://localhost:8086/${url}`,formdata)
+    .post(`http://localhost:8086/${url}`,formdata, {headers:
+        {
+            "X-Requested-With": "XMLHttpRequest",
+            Authentication: `${token}`
+        }
+    })
     .then((response)=>{
         alert(response.data);
         router.push({name : 'myacc'})
@@ -140,6 +147,9 @@ const url = (e,url) =>{
     .catch((error)=>{
         console.log("what the hell "+error);
     });
+}else{
+    console.log("이게 뭐노: "+ error);
+}
 };
 //값 불러오기
 const loaddata = () =>{

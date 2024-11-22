@@ -1,7 +1,11 @@
 <template>
-    <p>{{ year }} 년 {{ month +1 }} 월</p>
+    <div class="sellerContainer">
+    <div class="sellerController">
     <button @click="lastmonth">이전 달</button>
+    <p>{{ year }} 년 {{ month +1 }} 월</p>
     <button @click="nextmonth">다음 달</button>
+    </div>
+    <br>
     <div style="display: flex">
     <table class="calendar">
         <thead>
@@ -17,7 +21,8 @@
             </tr>
         </tbody>
     </table>
-    <CalendarOneDetail v-if="oneres" :oneres="oneres"></CalendarOneDetail>
+    </div>
+        <CalendarOneDetail v-if="oneres" :oneres="oneres" :isshow="showmethedetail" @close="closedetail"></CalendarOneDetail>
     </div>
 </template>
 <script setup>
@@ -92,7 +97,6 @@ import CalendarOneDetail from './CalendarOneDetail.vue';
             colorindex = (colorindex + 1) % tColor.length ;
         }
         resdaylist.splice(0,resdaylist.length, ...travelplan)
-        console.log(resdaylist);
     }
     const dayplans = (today) =>{
         const plan = [];
@@ -103,11 +107,15 @@ import CalendarOneDetail from './CalendarOneDetail.vue';
         }
         return plan;
     }
-    let oneres = ref('');
+    const oneres = ref('');
+    const showmethedetail = ref('');
     const showthisRes = (thisres) =>{
+        showmethedetail.value = 'block';
         oneres.value=thisres;
     }
-
+    const closedetail = () =>{
+        showmethedetail.value = 'none';
+    }
 onMounted(async()=>{
     await resmonth();
 });
@@ -116,11 +124,12 @@ onMounted(async()=>{
     .calendar table{
         border-collapse: collapse;
         display: inline-block;
+        width: 100%;
     }
     .calendar thead{
         text-align: center;
         background-color: #B2D055;
-        color: #45a049;
+        color: white;
         font-size: 20px;
         font-weight: bold;
         text-wrap: nowrap;

@@ -1,7 +1,9 @@
 <template>
-    <div>
+    <div class="post">
+      <div class="postcode">
       <input type="text" v-model="postcode" id="postcode" name="postcode"placeholder="우편번호" />
-      <button @click="sample6_execDaumPostcode" type="button">우편번호 찾기</button><br>
+      <button @click="sample6_execDaumPostcode" type="button">우편번호 찾기</button>
+      </div>
       <input type="text" v-model="address" placeholder="주소" id="address" name="address"/><br>
       <input type="text" v-model="detailAddress" placeholder="상세주소" id="detailAddress" name="detailAddress" ref="detailAddressInput" />
       <!--<input type="text" v-model="extraAddress" placeholder="참고항목" />-->
@@ -60,6 +62,29 @@
   });
   </script>
   
-<style>
-
+<style scoped>
+  input{
+    width: 100%;
+    height: 30px;
+    margin-bottom: 20px;
+  }
+  .post{
+    width: 1000px;
+  }
+  .postcode input{
+    width: calc(100% - 200px);
+  }
+  .postcode button{
+    width: 180px;
+    height: 30px;
+    margin-left: 20px;
+    background-color: #B2D055; /* 버튼 배경색 */
+    color: white; /* 버튼 텍스트 색상 */
+    border: none; /* 기본 테두리 제거 */
+    border-radius: 5px; /* 버튼 모서리 둥글게 */
+    padding: 8px 15px; /* 버튼 내부 여백 */
+    font-size: 16px; /* 버튼 텍스트 크기 */
+    cursor: pointer; /* 마우스 커서 변경 */
+    transition: background-color 0.3s ease; /* 배경색 변화 애니메이션 */
+  }
 </style>

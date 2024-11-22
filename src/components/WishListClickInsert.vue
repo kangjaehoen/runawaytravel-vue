@@ -28,7 +28,7 @@
             wishList,
             headers: {
                     "X-Requested-With": "XMLHttpRequest",
-                    Authorization: `Bearer ${token}`, // 템플릿 리터럴 사용하여 Authorization 헤더에 토큰을 포함
+                    Authorization: `${token}`, 
                 }
             });
             if (response.status === 200) {

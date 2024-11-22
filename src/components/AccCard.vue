@@ -52,11 +52,11 @@ const heart = async () => {
 
     if (token) {
         axios.get("http://localhost:8086/wish", {
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                Authorization: `Bearer ${token}`,  // 템플릿 리터럴 사용하여 토큰 포함
-            }
-        })
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    Authorization: `${token}`,
+                }
+            })
         .then((response)=>{
             const isWishlisted = response.data.some((item) => 
                 item.accomNum.accomNum === param.accom.accomNum

@@ -60,8 +60,14 @@ const pagedown = () =>{
     searchacc2(searched.value);
 }
 const getrandomaccoms = async() =>{
+    const token = localStorage.getItem("token");
     await axios
-    .get(`http://localhost:8086/getrandom?page=${page.value}`)
+    .get(`http://localhost:8086/getrandom?page=${page.value}`,{
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    Authorization: `${token}`,
+                }
+            })
     .then((response)=>{
         accoms.splice(0,accoms.length, ...response.data.getContent);
         totalpage.value=response.data.getTotalPages;
@@ -86,11 +92,10 @@ const goDetailPage = (accnum) =>{
 }
 
 onMounted(()=>{
-    getrandaccom(searchtext.value);
+    getrandomaccoms();
 })
 
 const username = ref("");
-const router = useRouter();
 
 onMounted(() => {
 

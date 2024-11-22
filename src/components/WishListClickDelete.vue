@@ -23,10 +23,10 @@
     if (token) {
         try {
             const response = await axios.delete(`http://localhost:8086/wish`, {
-                wishList, // 요청 본문에 wishList 데이터를 포함
+                wishList, 
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
-                    Authorization: `Bearer ${token}`, // 템플릿 리터럴 사용하여 Authorization 헤더에 토큰을 포함
+                    Authorization: `${token}`, 
                 }
             });
             if (response.status === 200) {

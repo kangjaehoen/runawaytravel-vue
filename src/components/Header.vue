@@ -1,17 +1,17 @@
 <template>
-  <header class="header">
-    <div class="logo">
-      <a href="/"> <!-- vue.js에서 a 태그대신 라우터 사용하기 -->
-        <img src="/images/logo.png" alt="Logo" />
-      </a>
-    </div>
-    <div class="headerRight">
-    <Menu></Menu>
-    </div>
-  </header>
-</template>
-
-<script setup>
+    <header class="header">
+      <div class="logo">
+        <a href="/"> <!-- vue.js에서 a 태그대신 라우터 사용하기 -->
+          <img src="/images/logo.png" alt="Logo" />
+        </a>
+      </div>
+      <div class="headerRight">
+      <Menu></Menu>
+      </div>
+    </header>
+  </template>
+  
+  <script setup>
 import Menu from './Menu.vue';
 
 </script>

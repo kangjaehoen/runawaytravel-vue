@@ -5,4 +5,5 @@
     import MyAccTable from '@/components/MyAccTable.vue';    
 </script>
 <style>
+
 </style>

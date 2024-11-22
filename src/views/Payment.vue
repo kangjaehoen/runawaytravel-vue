@@ -120,7 +120,7 @@
     }
     };
     
-    // 다음 페이지로 이동하는 함수
+    // 다음 페이지로 이동
     const nextPage = () => {
     if (currentPage.value < totalPages.value - 1) {
         currentPage.value++;
@@ -128,7 +128,7 @@
     }
     };
 
-    // 이전 페이지로 이동하는 함수
+    // 이전 페이지로 이동
     const previousPage = () => {
     if (currentPage.value > 0) {
         currentPage.value--;
@@ -167,24 +167,6 @@
         }
     };
     
-    // const openModal = async (impUid) => {
-    // try {
-    //     const response = await axios.get(/payResAccomInfo/${impUid});
-    //     selectedPaymentDetails.value = response.data;
-    //     isModalOpen.value = true;
-    // } catch (error) {
-    //     console.error('Error:', error);
-    // }
-    // };
-    
-    // const updatePagination = (data) => {
-    //     pagination.pages = Array.from({ length: Math.ceil(data.total / data.pageSize) }, (_, i) => i + 1);
-    // };
-    
-    // const changePage = (page) => {
-    // // 페이지 변경 로직 구현
-    // };
-    
     onMounted(() => {
         searchPayments();
     });
@@ -192,19 +174,19 @@
     
     <style scoped>
     body {
-    font-family: 'Pretendard-Regular', Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
+        font-family: 'Pretendard-Regular', Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
     }
     
     .container {
-    width: 100%;
-    margin: 50px auto;
-    background-color: white;
-    padding: 30px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+        width: 100%;
+        margin: 50px auto;
+        background-color: white;
+        padding: 30px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
     }
     
     header {
@@ -336,16 +318,15 @@
             font-style: normal;
         }
     
-                /* 스타일 생략 */
         .modal {
-            display: none; /* 기본적으로 모달을 숨김 */
+            display: none; 
             position: fixed;
-            z-index: 1000; /* 페이지 내에서 가장 앞에 위치하게 설정 */
+            z-index: 1000; 
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은색 배경 */
+            background-color: rgba(0, 0, 0, 0.5); 
             overflow: auto;
     
         }

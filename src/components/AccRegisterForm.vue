@@ -1,10 +1,10 @@
 <template>
-<form ref="regform">
+<form ref="regform" class="regform">
     <fieldset>
         <!--제출했을 때 username으로 해당 accomNum을 가지고 있는지 확인하는 알고리즘이 필요해보임. 안그러면 클라를 조작할 수 있잖아-->
         {{ accomNum }}
         <legend>상품명</legend>
-        <input type="text" name="accName" maxlength="30" required>
+        <input type="text" name="accName" maxlength="30" required class="accname">
     </fieldset>
     <fieldset>
         <legend>요금 설정</legend>
@@ -26,7 +26,7 @@
             <div class="left-section">
                 <AccRegImage></AccRegImage>
             </div>
-        <div class="right-section">
+            <div class="right-section">
                 <span>숙소 전화번호</span><input type="tel" name="accCall"><br>
                 <span>카테고리</span><input type="text" name="category" list="categorylist">
                 <datalist id="categorylist">
@@ -50,7 +50,7 @@
     </fieldset>
     <fieldset>
         <legend>판매 유형</legend>
-            <div class="radio-group">
+            <div class="group">
                 <input type="radio" name="accType" id="house1" value="게스트하우스">
                 <label for="house1">게스트하우스</label>
                 <input type="radio" name="accType" id="house2" value="펜션">
@@ -60,14 +60,17 @@
                 <input type="radio" name="accType" id="house4" value="캠핑장">
                 <label for="house4">캠핑장</label>
                 <input type="radio" name="accType" id="house5" value="풀빌라">
-                <label for="house5">풀빌라</label>                
+                <label for="house5">풀빌라</label>             
             </div>
     </fieldset>
     <fieldset>
         <legend>휴일</legend>
-        <label v-for="day in weekday">
-            <span v-text=day.dayofweek></span><input type="checkbox" name="dayoff" :value="day.value">
-        </label>
+        <div class="group">
+            <template v-for="(day, index) in weekday">
+                <input type="checkbox" name="dayoff" :id="'checkbox'+index" :value="day.value">
+                <label v-text=day.dayofweek :for="'checkbox'+index"></label>
+            </template>
+        </div>
     </fieldset>
     <div>
         <fieldset>
@@ -77,15 +80,17 @@
     </div>
     <fieldset>
         <legend>상세소개</legend>
-        <textarea name="informtext" rows="20" cols="50"></textarea>
+        <textarea name="informtext" rows="20" cols="50" maxlength="1000" v-model="informtext"></textarea>
+        <div class="textlength">{{ informtext.length }} / 1000</div>
     </fieldset>
     <fieldset>
         <legend>숙소규칙</legend>
-        <textarea name="accomRule" rows="10" cols="50"></textarea>
+        <textarea name="accomRule" rows="20" cols="50" maxlength="1000" v-model="accomRule" ></textarea>
+        <div class="textlength">{{ accomRule.length }} / 1000</div>
     </fieldset>
 
     <fieldset style="border : none;">
-        <div class="button-container">
+        <div class="sellerController">
             <button type="submit" id="upload" @click="url($event,'accUpload')" value="등록하기">등록하기</button>
             <button type="submit" id="update" @click="url($event,'accUpload')" value="수정하기" v-if="accomNum">수정하기</button>
             <button type="button" id="del" @click="del($event,'accDel')" value="숙소삭제" v-if="accomNum">삭제하기</button>
@@ -108,7 +113,9 @@ const weekday = reactive([
     {"dayofweek":"금","value":5},
     {"dayofweek":"토","value":6},
     {"dayofweek":"일","value":7},
-])
+]);
+const informtext = ref('');
+const accomRule = ref('')
 
 const regform = ref(null);
 let inputs = [];
@@ -188,6 +195,85 @@ onMounted(()=>{
 });
 
 </script>
-<style>
-
+<style scoped>
+    .regform{
+        width: 1100px;
+    }
+    .regform fieldset {
+    display: flex;
+    justify-content: center; /* 가로 가운데 정렬 */
+    align-items: center; /* 세로 가운데 정렬 */
+    flex-direction: column; /* 세로 방향 정렬 */
+    }
+    .flex-container{
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        width: 900px;
+        margin: 0 auto;
+    }
+    .right-section,
+    .left-section{
+        width: 48%;
+        display: flex;
+        flex-direction: column;
+    }
+    .group{
+        display: flex;
+        justify-content: space-between;
+        padding-left: 70px;
+        padding-right: 70px;
+    }
+    .accname{
+        width: 750px;
+        text-align: center;
+        font-size: 30px;
+        border: 0;
+    }
+    .textlength{
+        width: 100%;
+        text-align: right;
+    }
+    textarea{
+        width: 100%;
+        border: 0;
+        resize: none;
+        font-size: 20px;
+        line-height: 30px;
+    }
+    input{
+        display: inline-block;
+        width: 100%;
+        height: 30px;
+        align-self: center;
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    textarea:focus,
+    input:focus{
+        outline: none;
+    }
+    input[type='radio']{
+        display: none;
+    }
+    input[type='checkbox']{
+        display: none;
+    }
+    input[type="radio"]:checked + label,
+    input[type="checkbox"]:checked + label {
+        background-color: #45a049;
+        color: #fff;
+    }
+    label{
+        min-width: 60px;
+        height: 20px;
+        text-wrap: nowrap;
+        text-align: center;
+        justify-content: center;
+        border-radius: 7px;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
 </style>

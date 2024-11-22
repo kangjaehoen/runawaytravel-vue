@@ -1,8 +1,8 @@
 <template>
-    <table class="showtable">
+    <table class="showtable" :style="{'display' : isshow }">
         <thead>
             <tr>
-                <td colspan="3">예약 정보</td>
+                <td colspan="3">예약 정보<button class="xbutton" @click="close">X</button></td>
             </tr>
         </thead>
         <tbody>
@@ -44,14 +44,26 @@
 </template>
 <script setup>
  const p = defineProps({
-    oneres : Object
- })
+    oneres : Object,
+    isshow : String,
+ });
+    const emit = defineEmits(['close']);
+    const close = () =>{
+        emit('close');
+    }
 </script>
 <style>
     .showtable {
-        margin : 30px;
+        position: fixed; /* 화면에 고정 */
+        top: 50%; /* 화면의 세로 중앙 */
+        left: 50%; /* 화면의 가로 중앙 */
+        transform: translate(-50%, -50%); /* 가운데 정렬 */
+        background-color: white; /* 배경색 */
+        z-index: 1000; /* 다른 요소보다 위에 표시 */
         border-collapse: collapse;
-        display: inline-block;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+        padding: 20px;
+        border-radius: 10px; /* 모서리 둥글게 */
     }
     .showtable tbody td{
         min-width: 150px;
@@ -59,7 +71,6 @@
         text-wrap: nowrap;
         background-color: cornsilk;
         text-align: center;
-        cursor: pointer;
     }
     .showtable thead{
         text-align: center;
@@ -68,5 +79,13 @@
         font-size: 20px;
         font-weight: bold;
         text-wrap: nowrap;
-    }    
+    }
+    .xbutton{
+        float: right;
+        background-color: transparent;
+        border : 0;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+    }
 </style>

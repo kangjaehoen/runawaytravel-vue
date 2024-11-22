@@ -62,7 +62,7 @@
             <div class="additional-info">
                 <h4>호스트: {{ list.user?.name }}</h4><br> <!--옵셔널 체이닝-->
                 <p>숙소설명: {{ list.informtext }}</p><br>
-                <p>이용규칙: {{ list.accomRule }}</p>
+                <p v-if="list.accomRule">이용규칙: {{ list.accomRule }}</p>
             </div>
             </div>
 
@@ -78,8 +78,10 @@
                     :disabled-date="isDisabledDate"
                     format="YYYY-MM-DD"
                     :locale="ko"
-                />    
+                    :input-attr="{ value: formattedCheckIn }"
+                />
                 </div>
+
                 <div class="form-group">
                 <label for="checkOut" class="form-label">체크아웃</label><br />
                 <DatePicker
@@ -88,10 +90,11 @@
                     :disabled-date="isDisabledDate"
                     format="YYYY-MM-DD"
                     :locale="ko"
+                    :input-attr="{ value: formattedCheckOut }"
                 />
                 </div>
                 <div class="form-group">
-                <label class="form-label" @click="toggleGuestCounter"> <!-- 폰트크기때문에 form-control 에서 from-label로 변경  -->
+                <label class="form-label" @click="toggleGuestCounter">
                     게스트
                 </label>
                 <div 
@@ -139,12 +142,12 @@
                     * 어린이는 2세 ~ 12세까지를 기준으로 하며<br> 13세 이상은 성인요금이 부여됩니다.
                 </p>
             </div>
+
             </div>
         </div>
+
         </div>
     </div>
-
-    <ReviewsSection :replyRate="replyRate" :reviewList="reviewList" />
     </div>
 </div>
 </template>
@@ -160,52 +163,98 @@ import ConvenienceItem from '@/components/ConvenienceItem.vue';
 import GuestCounter from '@/components/GuestCounter.vue';
 import axios from 'axios';
 
+
 // 숙소 정보 로드 함수
 const accomInfo = async () => {
-try {
-    const response = await axios.get(`http://localhost:8086/accDetail/${accomNum}`);
-    if (response && response.data) {
-        aVO.value= response.data.accom;
-        list.value = response.data.accom;
-        revCnt.value = response.data.revCnt;
-        revRate.value = response.data.revRate;  
-        reservation.value= response.data.reservation;
+    try {
+        const response = await axios.get(`http://localhost:8086/accDetail/${accomNum}`);
+        if (response && response.data) {
+            aVO.value= response.data.accom;
+            list.value = response.data.accom;
+            revCnt.value = response.data.revCnt;
+            revRate.value = response.data.revRate;  
+            reservation.value= response.data.reservation;
 
-        // JSON 문자열을 객체로 변환
-        if (typeof list.value === 'string') {
-            list.value = JSON.parse(list.value); 
+            // JSON 문자열을 객체로 변환
+            if (typeof list.value === 'string') {
+                list.value = JSON.parse(list.value); 
+            }
         }
+    } catch (error) {
+        console.log('숙소정보를 불러오던 중 에러발생', error);
     }
-} catch (error) {
-    console.log('숙소정보를 불러오던 중 에러발생', error);
-}
 };
+
+
 
 const onDateChange = (value) => {
     console.log('checkIn value changed: ', value);
 };
 
 
+//예약날짜 중복확인 호출
+const checkDuplicateDates = async () => {
+    try{
+        const response= await axios.get(`http://localhost:8086/reservation/dateList`,{
+            params: {accomnum : accomNum},
+        });
+
+        if(response && response.data){
+            const bookdate = response.data;
+            return bookdate.map(date => dayjs(date).format('YYYY-MM-DD'));
+        }else{
+            return [];
+        }
+
+    }catch(error){
+        console.error('예약 중복 확인 중 오류 발생:', error);
+        return [];
+    }
+};
+
 const isDisabledDate = (date) => {
-    const formattedDate = date.toISOString().split('T')[0];
+    const formattedDate = dayjs(date).format('YYYY-MM-DD');
 
     // reservation 배열에서 체크인-체크아웃 날짜 범위를 확인
     return reservation.value.some((res) => {
-    const checkInDate = new Date(res.chkin_Date);
-    const checkOutDate = new Date(res.chkout_Date);
+        const checkInDate = dayjs(res.chkin_Date);
+        const checkOutDate = dayjs(res.chkout_Date);
 
     // 체크인 날짜 <= 선택 날짜 < 체크아웃 날짜
-    return formattedDate >= checkInDate.toISOString().split('T')[0] &&
-            formattedDate < checkOutDate.toISOString().split('T')[0]; // 체크아웃 날짜는 선택 가능
+    return (
+        formattedDate >= checkInDate.format('YYYY-MM-DD') &&
+        formattedDate < checkOutDate.format('YYYY-MM-DD')
+        );
     }); 
 };
+
+// 포맷된 체크인 및 체크아웃 날짜
+const formattedCheckIn = computed(() => {
+    return checkIn.value ? dayjs(checkIn.value).format('YYYY-MM-DD') : '';
+});
+const formattedCheckOut = computed(() => {
+    return checkOut.value ? dayjs(checkOut.value).format('YYYY-MM-DD') : '';
+});
 
 
 //props로 예약정보  넘기기
 const router= useRouter();
-const reservInfo = () =>{
+const reservInfo = async () =>{
     if(!validateForm()){
         return;
+    }
+
+    //예약 가능 여부 최종확인
+    const bookdate= await checkDuplicateDates();
+    let currentDate= dayjs(checkIn.value);
+    const checkOutDate= dayjs(checkOut.value);
+
+    while(currentDate.isBefore(checkOutDate)){
+        if(bookdate.includes(currentDate.format('YYYY-MM-DD'))){
+            alert("예약이 완료된 날짜가 포함되어 있습니다. 다른 날짜를 선택해주세요.");
+            return;
+        }
+        currentDate=currentDate.add(1,'day');
     }
 
     router.push({
@@ -230,18 +279,9 @@ const reviewList = ref([]);
 const revCnt = ref(0);
 const revRate = ref(null);
 
-// const checkIn = ref(new Date());
-// const checkOut = ref(new Date(new Date().setDate(new Date().getDate() + 1)));
-
 const checkIn= ref(null);
 const checkOut= ref(null);
 
-// const checkIn = ref(dayjs().format('YYYY-MM-DD'));  // 초기값을 문자열로 설정
-// const checkOut = ref(dayjs().add(1, 'day').format('YYYY-MM-DD'));
-
-//날짜 포맷팅
-// const formattedCheckIn =computed(() => dayjs(checkIn.value).format('YYYY-MM-DD'));
-// const formattedCheckOut =computed(() => dayjs(checkOut.value).format('YYYY-MM-DD'));
 
 const reservation = ref([]);
 const adultCnt = ref(1);
@@ -254,34 +294,36 @@ const guestCounterVisible = ref(true);
 const route = useRoute();
 const accomNum = route.params.accomNum;
 
-// const updateCheckIn = (value) => {
-//   checkIn.value = value;
-//   console.log('체크인 날짜 업데이트:', value);
-// };
-
-// const updateCheckOut = (value) => {
-//   checkOut.value = value;
-//   console.log('체크아웃 날짜 업데이트:', value);
-// };
-
 
 const updateCheckIn = async (value) => {
-  checkIn.value = value;  // 선택한 값을 반영
+ checkIn.value = value;  // 선택한 값을 반영
   await nextTick(); // 렌더링 후 값 반영 확인
   calculateDays();
-  console.log('체크인 날짜 업데이트:', checkIn.value);
+
+  //중복 날짜 확인
+  const bookdate= await checkDuplicateDates();
+    if(bookdate.includes(dayjs(checkIn.value).format('YYYY-MM-DD'))){
+        alert('예약이 완료된 날짜가 포함되어 있습니다. 날짜를 다시 선택해주세요.');
+        checkIn.value=null;
+        return;
+    }
 };
 
 const updateCheckOut = async (value) => {
   checkOut.value = value;  // 선택한 값을 반영
   await nextTick(); // 렌더링 후 값 반영 확인
   calculateDays();
-  console.log('체크아웃 날짜 업데이트:', checkOut.value);
+
+  //중복 날짜 확인
+  const bookdate= await checkDuplicateDates();
+    if(bookdate.includes(dayjs(checkOut.value).format('YYYY-MM-DD'))){
+        alert('예약이 완료된 날짜가 포함되어 있습니다. 날짜를 다시 선택해주세요.');
+        checkOut.value=null;
+        return;
+    }
 };
 
 const validateForm = () => {
-    console.log('checkIn:', checkIn.value);
-    console.log('checkOut:', checkOut.value);
 
 if (!checkIn.value || !checkOut.value) {
     alert('체크인과 체크아웃 날짜를 선택해주세요.');
@@ -290,9 +332,6 @@ if (!checkIn.value || !checkOut.value) {
 
 const date1 = new Date(checkIn.value);
 const date2 = new Date(checkOut.value);
-
-console.log('Parsed date1:', date1);
-console.log('Parsed date2:', date2);
 
 if (date2.getTime() <= date1.getTime()) {
     alert('체크아웃 날짜는 체크인 날짜 이후여야 합니다.');
@@ -312,13 +351,10 @@ const calculateDays = () => {
 if (checkIn.value && checkOut.value) {
     const date1 = new Date(checkIn.value);
     const date2 = new Date(checkOut.value);
-    // const date1 = typeof checkIn.value === 'string' ? new Date(checkIn.value) : checkIn.value;
-    // const date2 = typeof checkOut.value === 'string' ? new Date(checkOut.value) : checkOut.value;
-
-
+    
     const timeDifference = date2.getTime() - date1.getTime();
     const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-    // totalDays.value = daysDifference;
+
     totalDays.value = daysDifference > 0 ? daysDifference : 0;
     updatePrice(totalDays.value);
 
@@ -327,27 +363,8 @@ if (checkIn.value && checkOut.value) {
     return;
     }
     updatePrice(daysDifference);
-
-    // if(daysDifference > 0){
-    //     totalDays.value= daysDifference;
-    //     updatePrice(totalDays.value);
-    // }else{
-    //     totalDays.value=0;
-    //     totalPayment.value=0;
-    // }
 }
 };
-
-
-//checkOut 변경시 자동 날짜계산
-//watch([checkIn, checkOut], calculateDays);
-
-// watch([checkIn, checkOut], async () => {
-//     if(checkIn.value && checkOut.value){
-//         await nextTick(); // Vue의 다음 렌더링 사이클까지 기다림
-//         calculateDays();
-//     }
-// });
 
 watch([checkIn, checkOut], ([newCheckIn, newCheckOut]) => {
   console.log('watch에서 체크인 변경됨:', newCheckIn);
@@ -406,8 +423,6 @@ body {
 }
 
 .guest-counter-item {
-    /* margin-left: 15px;  
-    margin-right: 15px; */
     margin-bottom: 15px;
 }
 
@@ -449,10 +464,10 @@ header {
     gap: 20px; 
 } 
 .convenience-and-reviews {
-    flex: 2; /* 편의시설과 리뷰가 더 넓은 공간을 차지하도록 설정 */
+    flex: 2; 
 }
 .sidebar {
-    flex: 1; /* 사이드바의 크기 비율 설정 */
+    flex: 1; 
     position: sticky;
     top: 80px;
     padding: 15px;
@@ -517,7 +532,7 @@ header {
     align-items: center;
     justify-content: center;
 }
-/* 
+
 .vue-datepicker-popup {
     position: absolute !important;
     top: 0 !important; 
@@ -525,7 +540,7 @@ header {
     z-index: 9999 !important;
     transform: none !important;
     visibility: visible !important;
-} */
+} 
 .mx-datepicker-popup {
     position: absolute !important;
     top: auto !important;
@@ -535,6 +550,7 @@ header {
     visibility: visible !important;
     z-index: 9999 !important; /* 다른 UI 요소보다 위에 보이도록 설정 */
 }
+
 .row {
     overflow: visible; /* 팝업이 잘리지 않도록 설정 */
 }

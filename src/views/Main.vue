@@ -60,7 +60,7 @@ const pagedown = () =>{
     searchacc2(searched.value);
 }
 const getrandomaccoms = async() =>{
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     await axios
     .get(`http://localhost:8086/getrandom?page=${page.value}`,{
                 headers: {
@@ -99,7 +99,7 @@ const username = ref("");
 
 onMounted(() => {
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   if (token) {
     try {

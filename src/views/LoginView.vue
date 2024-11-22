@@ -63,8 +63,9 @@
           .then((res) => {
           const token = res.headers.get('Authorization');
           if (token) {
-            localStorage.setItem("token", token);
+            sessionStorage.setItem("token", token);
             axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            console.log('로그인 성공')
           }
           router.push({ name: "main" });
           })

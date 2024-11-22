@@ -41,6 +41,7 @@ const wishListDelete = ref();
 
 const loadimg = async () => {
     const token = localStorage.getItem("token");
+    console.log('TOken', token);
     if (param?.accom?.accomNum) {
         try {
             const response = await axios.get(

@@ -26,5 +26,13 @@ export default defineConfig({
   //     }
   //   }
   // }
+
+
+
+  server: {
+    proxt: {
+      "":"http://localhost:8086",
+    },
+  },
 });
 

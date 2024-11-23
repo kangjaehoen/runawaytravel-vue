@@ -40,6 +40,7 @@ import { useRouter } from 'vue-router';
 import { jwtDecode } from "jwt-decode";
 const accoms = reactive([]);
 const searchtext = ref('');
+
 const searched = ref('');
 const page = ref(0);
 const totalpage = ref(1);
@@ -92,8 +93,10 @@ const goDetailPage = (accnum) =>{
 }
 
 onMounted(()=>{
+
     getrandomaccoms();
 })
+
 
 const username = ref("");
 

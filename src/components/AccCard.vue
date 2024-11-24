@@ -54,6 +54,7 @@ const loadimg = async () => {
 
 const heart = async () => { 
     const token = sessionStorage.getItem("token");
+
     console.log('Token', token); 
     const decodedToken = jwtDecode(token); 
     let userName = decodedToken.username || "";
@@ -67,7 +68,6 @@ const heart = async () => {
                 }
             })
         .then((response)=>{
-            console.log(response.data.length);
             const isWishlisted = response.data.some((item) => 
                 item.accomNum.accomNum === param.accom.accomNum
             );

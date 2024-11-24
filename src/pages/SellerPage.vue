@@ -4,7 +4,18 @@
     </section>
 </template>
 <script setup>
-import { RouterLink, RouterView } from 'vue-router';
+import { RouterView } from 'vue-router';
+import router from '@/router';
+import { onMounted } from 'vue';
+const gomain = () =>{
+    router.push("/");
+}
+onMounted(()=>{
+    const already = sessionStorage.getItem("token");
+    if(!already){
+        gomain();
+    }
+})
 </script>
 <style>
     .main{

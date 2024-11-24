@@ -105,6 +105,7 @@ import { onMounted, reactive, ref } from 'vue';
 import router from '@/router';
 import AccRegImage from './AccRegImage.vue';
 import { useRoute } from 'vue-router';
+const token = sessionStorage.getItem("token");
 const weekday = reactive([
     {"dayofweek":"월","value":1},
     {"dayofweek":"화","value":2},
@@ -137,13 +138,12 @@ const url = (e,url) =>{
     if (e.target.value=='수정하기' && !isNaN(Number(accomNum.value))){
         formdata.append("accomNum" , accomNum.value);
     }
-    const token = sessionStorage.getItem("token");
     if(token){
     axios
     .post(`http://localhost:8086/api/${url}`,formdata, {headers:
         {
             "X-Requested-With": "XMLHttpRequest",
-            Authentication: `${token}`
+            Authorization: `${token}`
         }
     })
     .then((response)=>{
@@ -161,7 +161,10 @@ const url = (e,url) =>{
 const loaddata = () =>{
     if (!isNaN(Number(accomNum.value))){
         axios
-        .get(`http://localhost:8086/accLoad?accomNum=${accomNum.value}`)
+        .get(`http://localhost:8086/accLoad?accomNum=${accomNum.value}`,{headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    Authorization: `${token}`, 
+                }})
         .then((response)=>{
             lastdata.value = response.data.oneAcc;
             for(let input of inputs){
@@ -190,7 +193,11 @@ const loaddata = () =>{
 const del = (e,url) =>{
     //e.preventDefault(); type이 button이라 필요 없음.
     axios
-    .delete(`http://localhost:8086/${url}`,{params : {accomNum : accomNum.value}})
+    .delete(`http://localhost:8086/${url}`,
+    {
+    params : {accomNum : accomNum.value},
+    headers: { "X-Requested-With": "XMLHttpRequest", Authorization: `${token}`}
+    })
     .then((response)=>{
         alert(response.data);
         router.push({name : "myacc"});

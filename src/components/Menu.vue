@@ -1,11 +1,11 @@
 <template>
     <MenuLogin></MenuLogin>
-    <MenuSeller></MenuSeller>
+    <MenuSeller v-if="isLoggedIn"></MenuSeller>
 </template>
 <script setup>
 import MenuLogin from './MenuLogin.vue';
 import MenuSeller from './MenuSeller.vue';
-
+import { isLoggedIn } from '@/stores/login';
 </script>
 <style>
   .menu{

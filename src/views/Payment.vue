@@ -11,7 +11,7 @@
             <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
             </select>
     
-            <label for="month">전체 월</label>
+            <label for="month">청구 월</label>
             <select id="month" v-model="selectedMonth">
             <option value="">전체 월</option>
             <option v-for="month in months" :key="month" :value="month">{{ month }}</option>
@@ -73,7 +73,7 @@
     
     <script setup>
     import { ref, reactive, onMounted } from 'vue';
-    // import Reservation from './views/Reservation.vue';
+    import { jwtDecode } from "jwt-decode";
     import axios from 'axios';
     
     const selectedYear = ref('');
@@ -95,31 +95,80 @@
     const pagination = reactive({ pages: [] });
     
     //결제내역 조회 및 검색
-    const searchPayments = async () => {
-    try {
-        const response = await axios.get('http://localhost:8086/api/payment', {
-        params: {
-            status: selectedStatus.value || null,
-            year: selectedYear.value || null,
-            month: selectedMonth.value || null,
-            page: currentPage.value,
-            size: pageSize.value,
+    // const searchPayments = async () => {
+    // try {
+    //     const response = await axios.get('http://localhost:8086/api/payment', {
+    //     params: {
+    //         status: selectedStatus.value || null,
+    //         year: selectedYear.value || null,
+    //         month: selectedMonth.value || null,
+    //         page: currentPage.value,
+    //         size: pageSize.value,
+    //         },
+    //     });
+    //         // paymentList.value = response.data;
+    //         // updatePagination(response.data);
+    //         if (response.data) {
+    //             paymentList.value = response.data.content || [];
+    //             totalPages.value = response.data.totalPages || 1;
+    //             currentPage.value = response.data.currentPage || 0;
+    //         } else {
+    //             paymentList.value = [];
+    //         }    
+    // } catch (error) {
+    //     console.error('Error:', error);
+    // }
+    // };
+    
+    const searchPayments = () => {
+    const token = sessionStorage.getItem("token"); // 토큰 가져오기
+
+    let username = ""; 
+
+    if (token) {
+        try {
+            const decodedToken = jwtDecode(token); // jwtDecode를 통해 토큰 디코딩
+            username = decodedToken.username || ""; // username 값을 추출
+        } catch (error) {
+            console.error("토큰 디코딩 중 에러 발생:", error);
+        }
+    } else {
+        console.error("토큰이 없습니다. 로그인 상태를 확인하세요.");
+        return;
+    }
+
+    axios
+        .get('http://localhost:8086/api/payment', {
+            params: {
+                status: selectedStatus.value || null,
+                year: selectedYear.value || null,
+                month: selectedMonth.value || null,
+                page: currentPage.value,
+                size: pageSize.value,
+                username
             },
-        });
-            // paymentList.value = response.data;
-            // updatePagination(response.data);
-            if (response.data) {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                Authorization: `${token}`, // 헤더에 토큰 추가
+            },
+        })
+        .then((response) => {
+            if (response && response.data) {
                 paymentList.value = response.data.content || [];
                 totalPages.value = response.data.totalPages || 1;
                 currentPage.value = response.data.currentPage || 0;
             } else {
                 paymentList.value = [];
-            }    
-    } catch (error) {
-        console.error('Error:', error);
-    }
-    };
-    
+            }
+        })
+        .catch((error) => {
+            console.error("결제 정보를 불러오는 중 에러 발생:", error.response || error);
+        });
+};
+
+
+
+
     // 다음 페이지로 이동
     const nextPage = () => {
     if (currentPage.value < totalPages.value - 1) {

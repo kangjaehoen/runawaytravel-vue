@@ -75,7 +75,7 @@ const searchmine = () =>{
 const router = useRouter();
 
 const getData = () => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     console.log('Token', token);
     
     if (token) {
@@ -83,7 +83,10 @@ const getData = () => {
             .post('http://localhost:8086/myaccomtable', {
                 key: state.Search,
                 page: Currentpage.value,
-            })
+            },{headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    Authorization: `${token}`, 
+                }})
             .then((response) => {
                 state.Acclist = response.data.content;
                 state.Totalpage = response.data.totalPages;

@@ -42,7 +42,6 @@
         </div>
     </div>
     </div>
-
 </div>
 </template>
 
@@ -50,6 +49,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
+import { jwtDecode } from "jwt-decode";
 
 const route= useRoute();
 
@@ -61,112 +61,193 @@ const adultCnt = ref(route.query.adultCnt);
 const kidCnt = ref(route.query.kidCnt);
 const totalDays = ref(route.query.totalDays);
 const totalPayment = ref(route.query.totalPayment);
+
 const revCnt= ref(0);
 const revRate= ref('');
 const accom= ref({});
+const accomNum = ref(route.query.accomnum);
 const reservation = ref([]);
+const reservationInfo= ref({});
 
 //query전달 외 accom정보들
 const resAccom = async () => {
-    try{
-        const accomNum = route.query.accomnum || '';
-        if(!accomNum){
-            return;
-        }
-        const response= await axios.get(`http://localhost:8086/reservation/info`,{
-            params: {accomNum},
-        });
-        if(response && response.data){
-            revCnt.value= response.data.revCnt;
-            revRate.value= response.data.revRate;
-            accom.value= response.data.accom;
-            reservation.value= response.data.reservation;
-        }
-    
-    }catch(error){
-        console.error("숙소 정보를 불러오던 중 에러발생", error.response || error);
+  try {
+    const accomNum = route.query.accomnum || '';
+    if (!accomNum) {
+      return;
     }
-
+    const response = await axios.get(`http://localhost:8086/api/reservation/info`, {
+      params: { accomNum },
+    });
+    if (response && response.data) {
+      revCnt.value = response.data.revCnt;
+      revRate.value = response.data.revRate;
+      accom.value = response.data.accom;
+      reservation.value = response.data.reservation;
+    }
+  } catch (error) {
+    console.error("숙소 정보를 불러오던 중 에러발생", error.response || error);
+  }
 };
 
 
 // 환불 정책 날짜 포맷팅
 const formattedCheckInDate = ref(`${checkIn.value.substring(5, 7)}월 ${checkIn.value.substring(8)}일`);
 
+let reservInfo= {};
+
 // 결제 버튼 클릭 핸들러
 const handleOrder = async () => {
-    const reservationInfo = {
+
+    reservationInfo.value = {
         checkIn: checkIn.value,
         checkOut: checkOut.value,
         adultCnt: adultCnt.value,
         kidCnt: kidCnt.value,
         totalDays: totalDays.value,
         totalPayment: totalPayment.value,
+        accomNum: route.query.accomnum,
     };
 
+    const reservInsert = await insertReservation(reservationInfo.value);
 
-    // 예약 정보 삽입
-    const insertReservation = async (reservationInfo) => {
-        try {
-            await axios.put(`/reservation/insertRes`, reservationInfo);
-            alert('예약이 성공적으로 완료되었습니다.');
-            processPayment();
-        } catch (error) {
-            alert('예약 insert 실패');
-        }
-    };
-
-    // 결제 처리 함수
-    const processPayment = () => {
-    const { IMP } = window;
-    IMP.init('imp16048664'); // 가맹점 식별코드
-    IMP.request_pay(
-        {
-        pg: 'html5_inicis',
-        pay_method: 'card',
-        merchant_uid: `merchant_${new Date().getTime()}`,
-        name: accomName.value,
-        amount: totalPayment.value,
-        buyer_email: 'amy010901@naver.com',
-        buyer_name: '수민짱',
-        buyer_tel: '010-1234-5678',
-        buyer_addr: '서울 송파구 중대로 135 it벤처타워',
-        buyer_postcode: '123-456',
-        },
-        (res) => {
-        if (res.success) {
-            const payInfo = {
-            accomNum: reservationInfo.accomNum,
-            impUid: res.imp_uid,
-            merchantUid: res.merchant_uid,
-            amount: res.paid_amount,
-            pay_Status: 'Y',
-            name: accomName.value,
-            apply_num: res.apply_num,
-            };
-            insertPayment(payInfo);
-        } else {
-            alert(`결제에 실패하였습니다.\n실패사유: ${res.error_msg}`);
-        }
-        }
-    );
-    };
-
-    // 결제 정보 삽입
-    const insertPayment = async (payInfo) => {
-        try {
-        await axios.post(`/reservation/payment?accomNum=${payInfo.accomNum}`, payInfo);
-        alert('결제가 성공적으로 완료되었습니다.');
-        window.location.href = '/';
-        } catch (error) {
-        alert('결제 실패');
+    if(reservInsert){
+        processPayment();
     }
-    };
+
 };
+
+
+ // 예약 정보 삽입
+const insertReservation = (reservationInfo) => {
+    const token = sessionStorage.getItem("token");
+    if (token) {
+        return axios
+            .put(
+                `http://localhost:8086/api/reservation/insertRes`,
+                reservationInfo,
+                {
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        Authorization: `${token}`, // Authorization 헤더 추가
+                    },
+                }
+            )
+            .then((response) => {
+                if (response && response.data) {
+                    reservationInfo.resNum = response.data.resNum;
+                    alert("예약이 성공적으로 완료되었습니다.");
+                    return true;
+                }
+            })
+            .catch((error) => {
+                alert("예약에 실패했습니다.");
+                console.error("Error:", error.response || error);
+                return false;
+            });
+    } else {
+        alert("로그인 토큰이 없습니다. 다시 로그인해주세요.");
+        return Promise.resolve(false); // Promise 반환을 유지하기 위해 resolve로 처리
+    }
+};
+
+
+
+
+// 결제 정보 삽입
+const insertPayment = (payInfo) => {
+    const token = sessionStorage.getItem("token");
+    if (token) {
+        return axios
+            .put(`http://localhost:8086/api/payment`, payInfo, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    Authorization: `${token}`, // Authorization 헤더 추가
+                },
+            })
+            .then(() => {
+                alert("결제가 성공적으로 완료되었습니다.");
+                window.location.href = "/"; // 홈 화면으로 이동
+                return true;
+            })
+            .catch((error) => {
+                alert("결제 insert 실패");
+                console.error("Error:", error.response || error);
+                return false;
+            });
+    } else {
+        alert("로그인 토큰이 없습니다. 다시 로그인해주세요.");
+        return Promise.resolve(false); // Promise 반환
+    }
+};
+
+
+
+// 결제 처리 함수
+const processPayment = () => {
+if(!window.IMP){
+    console.error("아임포트 SDK가 로드되지 않았습니다.");
+    return;
+}
+
+// 토큰에서 사용자 정보 추출
+const token = sessionStorage.getItem("token");
+let username = ""; // username 변수 선언
+
+if (token) {
+    try {
+        const decodedToken = jwtDecode(token); // jwtDecode를 통해 토큰 디코딩
+        username = decodedToken.username || ""; // username 값을 추출
+    } catch (error) {
+        console.error("토큰 디코딩 중 에러 발생:", error);
+    }
+}
+
+window.IMP.init('imp16048664'); // 가맹점 식별코드
+window.IMP.request_pay(
+    {
+    pg: 'html5_inicis',
+    pay_method: 'card',
+    merchant_uid: `merchant_${new Date().getTime()}`,
+    name: accom.value.accName,
+    amount: totalPayment.value,
+    buyer_email: 'amy010901@naver.com',
+    buyer_name: '수민짱',
+    buyer_tel: '010-1234-5678',
+    buyer_addr: '서울 송파구 중대로 135 it벤처타워',
+    buyer_postcode: '123-456'
+    },
+    (res) => {
+    if (res.success) {
+        const payInfo = {
+        accomNum: reservationInfo.value.accomNum,
+        impUid: res.imp_uid,
+        merchantUid: res.merchant_uid,
+        amount: res.paid_amount,
+        pay_Status: 'Y',
+        name: accom.value.accName,
+        resNum: reservationInfo.value.resNum,
+        apply_num: res.apply_num,
+        username: username
+        };
+
+        if(res.apply_num){
+            payInfo.apply_num= res.apply_num;
+        }
+        console.log("결제 정보 확인:", payInfo);
+        insertPayment(payInfo);
+    } else {
+        alert(`결제에 실패하였습니다.\n실패사유: ${res.error_msg}`);
+    }
+    }
+    );
+};
+
 
 onMounted(() => {
     resAccom();
 });
+
 </script>
 
 <style scoped>

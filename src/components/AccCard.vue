@@ -56,6 +56,7 @@ const heart = async () => {
                     "X-Requested-With": "XMLHttpRequest",
                     Authorization: `${token}`, 
                 }})
+
         .then((response)=>{
             console.log(response.data.length);
             const isWishlisted = response.data.some((item) => 
@@ -130,8 +131,8 @@ const goDetailPage = (accnum) =>{
     .td-class {
         /* position: relative; */
         /* padding-right: 30px; */
-    }
 
+    }
     .heartImg {
         position: absolute;
         right: 10px; /* 오른쪽으로 10px 떨어지게 */

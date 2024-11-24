@@ -45,6 +45,8 @@ const pageup = () =>{
         page.value++;
     } else {
         page.value = 0;
+        searched.value = key;
+        searchacc2(key);
     }
     if(searched.value==""){
         getrandomaccoms();
@@ -209,4 +211,3 @@ const username = ref("");
         height:20px;
     }
 </style>
-

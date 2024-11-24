@@ -4,7 +4,7 @@
             <tbody>
                 <tr>
                     <td>
-                        <img class="accimg" :src="accomimg?`${accomimg.filePath}`:'/ocean.jpg'">
+                        <img class="accimg" :src="accomimg?`${accomimg.filePath}`:'/ocean.jpg'" @click="goDetailPage(accom.accomNum)">
                     </td>
                 </tr>
                 <tr>
@@ -23,15 +23,17 @@
 </template>
 <script setup>
 import axios from 'axios';
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import WishListClickInsert from '@/components/WishListClickInsert.vue'
 import WishListClickDelete from '@/components/WishListClickDelete.vue'
+import router from '@/router';
 
 const param = defineProps({
     accom: Object,
 });
 
 const accomimg = ref(null);
+const heartImage = ref('');
 
 const loadimg = async () => {
     if (param.accom && param.accom.accomNum) {
@@ -46,11 +48,17 @@ const loadimg = async () => {
 
 const heart = async () => { 
     const token = sessionStorage.getItem("token");
-    console.log('Token', token);  // 문제가 없으면 이 줄은 정상적으로 실행됩니다.
-
+    // console.log('Token', token);  // 문제가 없으면 이 줄은 정상적으로 실행됩니다.
+    // console.log("what the hell1");
     if (token) {
-        axios.get("http://localhost:8086/api/wish")
+        console.log("what the hell2");
+        axios.get("http://localhost:8086/api/wish",{headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    Authorization: `${token}`, 
+                }})
+
         .then((response)=>{
+            console.log(response.data.length);
             const isWishlisted = response.data.some((item) => 
                 item.accomNum.accomNum === param.accom.accomNum
             );
@@ -64,7 +72,7 @@ const heart = async () => {
             console.error("Failed to fetch accommodation list:", error);
         });
     } else {
-        console.log("No token found");
+        // console.log("No token found");
     }
 };
 
@@ -97,6 +105,9 @@ const clickHeart = (e,accomNum) =>{
         heartImage.value = "/images/EmptyLove.png";
     }
 }
+const goDetailPage = (accnum) =>{
+    router.push(`/accDetail/${accnum}`)
+}
 </script>
 
 <style scoped>
@@ -104,7 +115,7 @@ const clickHeart = (e,accomNum) =>{
         display: inline-block;
     }
     .accomCard:hover{
-        background-color: rgb(117, 91, 59);
+        background-color: bisque;
     }
     .accimg{
         width: 200px;
@@ -118,10 +129,10 @@ const clickHeart = (e,accomNum) =>{
         /* display: inline-block; */
     }
     .td-class {
-        /* position: relative; td를 기준으로 절대 위치 설정 */
-        /* padding-right: 30px; 오른쪽 여백을 줘서 heartImg와 겹치지 않도록 설정 */
-    }
+        /* position: relative; */
+        /* padding-right: 30px; */
 
+    }
     .heartImg {
         position: absolute;
         right: 10px; /* 오른쪽으로 10px 떨어지게 */

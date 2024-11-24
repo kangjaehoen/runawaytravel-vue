@@ -3,8 +3,11 @@
         <table>
             <tbody>
                 <tr>
-                    <td>
-                        <img class="accimg" :src="accomimg?`${accomimg.filePath}`:'/ocean.jpg'">
+                    <td class="accimgbox">
+                        <img :src="accomimg?`${accomimg.filePath}`:'/ocean.jpg'" @click="goDetailPage(accom.accomNum)">
+                        <div>
+                            <button v-for="ao in 6" @click.stop="stretchedbutton(ao - 1)" :class="ao-1==buttonnumber?'y':''"></button>
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -20,17 +23,21 @@
 <script setup>
 import axios from 'axios';
 import { ref, watch } from 'vue';
+import router from '@/router';
 
 const param = defineProps({
     accom: Object,
 });
-
+const emit = defineEmits(
+    ['stretchedbutton']
+)
+const buttonnumber = ref(0);
 const accomimg = ref(null);
 
 const loadimg = async () => {
     if (param.accom && param.accom.accomNum) {
         try {
-            const response = await axios.get(`http://localhost:8086/getaccomimage?accomNum=${param.accom.accomNum}`);
+            const response = await axios.get(`http://localhost:8086/api/getaccomimage?accomNum=${param.accom.accomNum}`);
             accomimg.value = response.data;
         } catch {
             accomimg.value = null;
@@ -42,28 +49,58 @@ watch(
     () => param.accom?.accomNum,
     (newVal, oldVal) => {
         if (newVal !== oldVal) {
-            console.log("accomNum 변경됨");
             loadimg();
         }
     },
     { immediate: true , deep : true }
 );
+// watch(()=>buttonnumber.value,(newVal, oldVal)=>{
+//     if(newVal !== oldVal){
+//         console.log(oldVal+"->"+newVal);
+//     }
+// })
+
+const stretchedbutton = (e) =>{
+    buttonnumber.value = e;
+    emit('stretchedbutton',e);
+}
+const goDetailPage = (accnum) =>{
+    router.push(`/accDetail/${accnum}`)
+}
 </script>
 <style scoped>
     .accomCard{
         display: inline-block;
     }
     .accomCard:hover{
-        background-color: bisque;
+        cursor: pointer;
+        text-decoration-line: underline;
     }
-    .accimg{
+    .accimgbox{
+        position: relative;
+    }
+    .accimgbox div{
+        position: absolute;
+        bottom: 30px;
+        right: 60px;
+    }
+    .accimgbox img{
         width: 1150px;
         height: 400px;
+    }
+    .accimgbox button{
+        display: inline-block;
+        border-radius: 25px;
+        width: 10px;
+        height: 10px;
     }
     .textshorten{
         width: 1200px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis; 
+    }
+    .y{
+        background-color: darkcyan;
     }
 </style>

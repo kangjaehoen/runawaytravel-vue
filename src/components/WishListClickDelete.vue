@@ -17,12 +17,12 @@
 
     const clickHeart = async (accomNum) => {
     wishList.accomNum = accomNum;
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     console.log('Token', token);
 
     if (token) {
         try {
-            const response = await axios.delete(`http://localhost:8086/wish`, {
+            const response = await axios.delete(`http://localhost:8086/api/wish`, {
                 wishList, 
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",

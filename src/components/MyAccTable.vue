@@ -83,11 +83,6 @@ const getData = () => {
             .post('http://localhost:8086/myaccomtable', {
                 key: state.Search,
                 page: Currentpage.value,
-            }, {
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    Authorization: `${token}`,
-                }
             })
             .then((response) => {
                 state.Acclist = response.data.content;

@@ -6,7 +6,6 @@
     </div>
     <div class="search-bar-container">
         <div class="search-bar">
-            
             <input type="text" v-model="searchtext" placeholder="검색할 내용을 입력해주세요." required @keyup.enter="searchacc(searchtext)">
             <button type="button" @click="searchacc(searchtext)">
                 <img id="searchButton" src="../../images/searchbtn.png" />
@@ -16,13 +15,13 @@
     <br>
     <div class="stretchedContainer">
         <div class="box" style="text-align: center;">
-        <AccCardStretched :accom="accoms[0]" @click="goDetailPage(accoms[0])"></AccCardStretched>
+        <AccCardStretched :accom="stretchedaccom[stretchedpage]" @stretchedbutton="movestrechedaccom"></AccCardStretched>
         </div>
     </div>
     <div class="accomCardContainer">
         <button @click="pagedown()" class="mainbutton">&lt</button>
         <div class="box">
-            <AccCard v-if="accoms.length > 0" v-for="accom in accoms" :accom="accom" @click="goDetailPage(accom.accomNum)"></AccCard>
+            <AccCard v-if="accoms.length > 0" v-for="accom in accoms" :accom="accom"></AccCard>
         </div>
         <button @click="pageup()" class="mainbutton">&gt</button>
     </div>
@@ -33,10 +32,8 @@
 <script setup>
 import AccCard from "@/components/AccCard.vue";
 import AccCardStretched from "@/components/AccCardStretched.vue";
-import router from "@/router";
 import axios from "axios";
 import { onMounted, reactive, ref } from "vue";
-import { useRouter } from 'vue-router';
 import { jwtDecode } from "jwt-decode";
 const accoms = reactive([]);
 const searchtext = ref('');
@@ -49,7 +46,11 @@ const pageup = () =>{
     } else {
         page.value = 0;
     }
-    searchacc2(searched.value);
+    if(searched.value==""){
+        getrandomaccoms();
+    } else {
+        searchacc2(searched.value);
+    }
 }
 const pagedown = () =>{
     if(page.value > 0){
@@ -57,17 +58,30 @@ const pagedown = () =>{
     } else {
         page.value = totalpage.value - 1;
     }
-    searchacc2(searched.value);
+    if(searched.value==""){
+        getrandomaccoms();
+    } else {
+        searchacc2(searched.value);
+    }
 }
-const getrandomaccoms = async() =>{
-    const token = localStorage.getItem("token");
+const getrandomone = async() =>{
     await axios
-    .get(`http://localhost:8086/getrandom?page=${page.value}`,{
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    Authorization: `${token}`,
-                }
-            })
+    .get(`http://localhost:8086/api/getrandom?page=${page.value}`)
+    .then((response)=>{
+        stretchedaccom.splice(0,accoms.length, ...response.data.getContent);
+        stretchedtotalpage.value=response.data.getTotalPages;
+    })
+}
+const stretchedaccom = reactive([]);
+const stretchedpage = ref(0);
+const stretchedtotalpage = ref(1);
+const movestrechedaccom = (num) =>{
+    stretchedpage.value = num;
+}
+
+const getrandomaccoms = async() =>{
+    await axios
+    .get(`http://localhost:8086/api/getrandom?page=${page.value}`)
     .then((response)=>{
         accoms.splice(0,accoms.length, ...response.data.getContent);
         totalpage.value=response.data.getTotalPages;
@@ -81,39 +95,35 @@ const searchacc = (key) =>{
 
 const searchacc2 = async(key) =>{
     axios
-    .get(`http://localhost:8086/search?key=${key}&page=${page.value}`)
+    .get(`http://localhost:8086/api/search?key=${key}&page=${page.value}`)
     .then((response)=>{
         accoms.splice(0,accoms.length, ...response.data.getContent);
         totalpage.value=response.data.getTotalPages;
     })
 }
-const goDetailPage = (accnum) =>{
-    router.push(`/accDetail/${accnum}`)
-}
 
 onMounted(()=>{
     getrandomaccoms();
+    getrandomone();
 })
 
 const username = ref("");
 
-onMounted(() => {
+// onMounted(() => {
 
-  const token = localStorage.getItem("token");
+//   const token = sessionStorage.getItem("token");
 
-  if (token) {
-    try {
-      const decodedToken = jwtDecode(token); //토큰 디코딩
-      username.value = decodedToken.username; //유저이름 꺼내기
-    } catch (error) {
-      console.error("Invalid token:", error); 
-      router.push("/login");//에러나면 로그인페이지로
-    }
-  } else {
-    console.log("No token found");
-    router.push("/login"); // 토큰을 못찾을때도 로그인페이지로
-  }
-});
+//   if (token) {
+//     try {
+//       const decodedToken = jwtDecode(token); //토큰 디코딩
+//       username.value = decodedToken.username; //유저이름 꺼내기
+//     } catch (error) {
+//       console.error("Invalid token:", error); 
+//     }
+//   } else {
+//     console.log("No token found");
+//   }
+// });
 </script>
 <style scoped>
     .accomCardContainer{
@@ -141,6 +151,9 @@ onMounted(() => {
     }
     .box{
         width: 1250px;
+    }
+    .box button{
+        width: 100;
     }
 
     /* 검색바 스타일 */

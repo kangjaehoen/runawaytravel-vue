@@ -140,7 +140,7 @@ const url = (e,url) =>{
     const token = sessionStorage.getItem("token");
     if(token){
     axios
-    .post(`http://localhost:8086/${url}`,formdata, {headers:
+    .post(`http://localhost:8086/api/${url}`,formdata, {headers:
         {
             "X-Requested-With": "XMLHttpRequest",
             Authentication: `${token}`

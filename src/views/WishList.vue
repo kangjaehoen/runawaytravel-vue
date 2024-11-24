@@ -22,20 +22,25 @@
     import { onMounted, ref, watch } from 'vue';
     import axios from 'axios';
     import { useRouter } from 'vue-router';
+    import { jwtDecode } from "jwt-decode";
 
     const accomList =ref([]);
     const router = useRouter();
     const wishListDelete = ref();
 
+
     const fetchAccomList = () => {
-    const token = localStorage.getItem("token");
-    console.log('Token', token);  // 문제가 없으면 이 줄은 정상적으로 실행됩니다.
+    const token = sessionStorage.getItem("token");
+    console.log('Token', token); 
+    const decodedToken = jwtDecode(token); 
+    let userName = decodedToken.username || "";
+    console.log(userName);
 
     if (token) {
-        axios.get("http://localhost:8086/wish", {
+        axios.get("http://localhost:8086/api/wish/"+userName, {
             headers: {
                 "X-Requested-With": "XMLHttpRequest",
-                Authorization: `Bearer ${token}`,  // 템플릿 리터럴 사용하여 토큰 포함
+                Authorization: `${token}`, 
             }
         })
         .then((response) => {
@@ -55,7 +60,7 @@
     }
 };
 
-  onMounted(() => {
+onMounted(() => {
     fetchAccomList();
 });
 

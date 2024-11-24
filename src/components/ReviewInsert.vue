@@ -75,8 +75,12 @@
 <script setup>
     import axios from 'axios';
     import { reactive, ref , defineProps } from 'vue';
+    import { jwtDecode } from "jwt-decode";
 
     const reviewContent = ref("");
+
+    const token = sessionStorage.getItem("token");
+    console.log('Token:', token);
 
     const satisfy = ref(0);  
     const accuracy = ref(0);  
@@ -124,6 +128,7 @@
         }
 
         const reviewData = reactive({
+            userName: '',
             accomNum: props.accomNum, // 숙소 번호
             satisfy: satisfy.value,
             accuracy: accuracy.value,
@@ -134,35 +139,31 @@
         console.log("reviewData: ", reviewData);
         
 
-        const token = localStorage.getItem("token");
-        console.log('Token', token);
+        
         if (!token) {
             alert("로그인이 필요합니다. 토큰이 없습니다.");
             console.log("No token found.");
             return;
         }
-
-        try {
+        const decodedToken = jwtDecode(token); 
+        reviewData.userName = decodedToken.username || "";
+        console.log("하트 사가제 :"+reviewData.userName);
+      
             // POST 요청
             const response = await axios.post(
-                "http://localhost:8086/review",
-                reviewData, // 리뷰 데이터
+                "http://localhost:8086/api/review", reviewData, // 리뷰 데이터
                 {
                     headers: {
                         "X-Requested-With": "XMLHttpRequest",
-                        Authorization: `Bearer ${token}`, // Authorization 헤더 추가
+                        Authorization: `${token}`, // Authorization 헤더 추가
                     },
-                }
-            );
+                });
             if (response.status === 200) {
                 alert("리뷰가 등록되었습니다.");
             } else {
                 alert("리뷰 등록에 실패했습니다.");
             }
-        } catch (error) {
-            console.error("리뷰 등록 중 오류 발생:", error);
-            alert("리뷰 등록 중 문제가 발생했습니다.");
-        }
+    
     };
 </script>
 

@@ -73,7 +73,7 @@ import CalendarOneDetail from './CalendarOneDetail.vue';
     }    
     const resmonth = async() =>{
         await axios
-        .get(`http://localhost:8086/resmonth?start=${calendarstarttext.value}&end=${calendarendtext.value}`)
+        .get(`http://localhost:8086/api/resmonth?start=${calendarstarttext.value}&end=${calendarendtext.value}`)
         .then((response)=>{
             reslist.splice(0,reslist.length, ...response.data.resmonth);
             //console.log(reslist)

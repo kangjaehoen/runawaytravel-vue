@@ -149,6 +149,7 @@
         </div>
     </div>
     </div>
+    <ReviewPage :accomNum="accomNum"></ReviewPage>
 </div>
 </template>
 
@@ -162,7 +163,7 @@ import ko from 'vue-datepicker-next/locale/ko';
 import ConvenienceItem from '@/components/ConvenienceItem.vue';
 import GuestCounter from '@/components/GuestCounter.vue';
 import axios from 'axios';
-
+import ReviewPage from '@/pages/ReviewPage.vue';
 
 // 숙소 정보 로드 함수
 const accomInfo = async () => {

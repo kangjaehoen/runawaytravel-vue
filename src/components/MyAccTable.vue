@@ -80,7 +80,7 @@ const getData = () => {
     
     if (token) {
         axios
-            .post('http://localhost:8086/myaccomtable', {
+            .post('http://localhost:8086/api/myaccomtable', {
                 key: state.Search,
                 page: Currentpage.value,
             }, {
@@ -125,7 +125,7 @@ const checkchange = (e)=>{
 const checkedonsalechange = async() =>{
     if(checklist.value.length != 0){
         await axios
-        .post("http://localhost:8086/changeonsale",checklist.value)
+        .post("http://localhost:8086/api/changeonsale",checklist.value)
         .then((response)=>console.log(response.data));
     }
     getData();

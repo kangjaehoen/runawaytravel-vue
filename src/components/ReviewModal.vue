@@ -172,12 +172,12 @@ const searchReviews = () => {
     reviewModalData.value.currentPage = 0;
 
     if(search.value != ''){
-        axios.get(`http://localhost:8086/review/${props.accomNum}/${search.value}?page=${reviewModalData.value.currentPage}`)
+        axios.get(`http://localhost:8086/api/review/${props.accomNum}/${search.value}?page=${reviewModalData.value.currentPage}`)
             .then((response) => {
             reviewModalData.value = response.data;
         });
     } else {
-        axios.get(`http://localhost:8086/review/${props.accomNum}?page=${reviewModalData.value.currentPage}`)
+        axios.get(`http://localhost:8086/api/review/${props.accomNum}?page=${reviewModalData.value.currentPage}`)
             .then((response) => {
             reviewModalData.value = response.data;
         });
@@ -187,7 +187,7 @@ const searchReviews = () => {
 
 
 onMounted(()=> {
-        axios.get(`http://localhost:8086/review/${props.accomNum}`)
+        axios.get(`http://localhost:8086/api/review/${props.accomNum}`)
             .then((response)=>{
             reviewModalData.value= response.data;
     });

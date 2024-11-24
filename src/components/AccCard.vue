@@ -8,15 +8,13 @@
                     </td>
                 </tr>
                 <tr>
-
                     <td class="td-class">
                         <p class="textshorten">{{ accom.accName }}</p> 
                         <img @click='clickHeart($event,accom.accomNum)' :src="heartImage" class="heartImg">
                         <p class="textshorten">{{ accom.address }}</p>
                         <p>￦ {{ accom.price }}</p>
                         <WishListClickInsert ref="wishListInsert" :accom="accom.accomNum"></WishListClickInsert> 
-                        <WishListClickDelete ref="wishListDelete" :accom="accom.accomNum"></WishListClickDelete>
-                        
+                        <WishListClickDelete ref="wishListDelete" :accom="accom.accomNum"></WishListClickDelete>                        
                     </td>
                 </tr>
             </tbody>
@@ -28,17 +26,21 @@ import axios from 'axios';
 import { ref, watch, onMounted } from 'vue';
 import WishListClickInsert from '@/components/WishListClickInsert.vue'
 import WishListClickDelete from '@/components/WishListClickDelete.vue'
+import { jwtDecode } from "jwt-decode";
 
 const param = defineProps({
     accom: Object,
 });
 
 const accomimg = ref(null);
+const heartImage = ref('');
+const wishListInsert =ref('');
+const wishListDelete =ref('');
 
 const loadimg = async () => {
     if (param.accom && param.accom.accomNum) {
         try {
-            const response = await axios.get(`http://localhost:8086/getaccomimage?accomNum=${param.accom.accomNum}`);
+            const response = await axios.get(`http://localhost:8086/api/getaccomimage?accomNum=${param.accom.accomNum}`);
             accomimg.value = response.data;
         } catch {
             accomimg.value = null;
@@ -47,17 +49,21 @@ const loadimg = async () => {
 };
 
 const heart = async () => { 
-    const token = localStorage.getItem("token");
-    console.log('Token', token);  // 문제가 없으면 이 줄은 정상적으로 실행됩니다.
+    const token = sessionStorage.getItem("token");
+    console.log('Token', token);
+    let userName = "";
+    const decodedToken = jwtDecode(token); 
+    userName = decodedToken.username || "";
+    console.log(userName);
 
+     // 문제가 없으면 이 줄은 정상적으로 실행됩니다.
     if (token) {
-        axios.get("http://localhost:8086/wish", {
-                headers: {
+        axios.get("http://localhost:8086/api/wish/"+userName,{headers: {
                     "X-Requested-With": "XMLHttpRequest",
-                    Authorization: `${token}`,
-                }
-            })
+                    Authorization: `${token}`, 
+                }})
         .then((response)=>{
+            console.log(response.data.length);
             const isWishlisted = response.data.some((item) => 
                 item.accomNum.accomNum === param.accom.accomNum
             );
@@ -88,7 +94,7 @@ watch(
 );
 
 const clickHeart = (e,accomNum) =>{
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     e.stopPropagation();
     if(heartImage.value === "/images/EmptyLove.png"){
         if(wishListInsert.value){
@@ -122,11 +128,11 @@ const clickHeart = (e,accomNum) =>{
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis; 
-        display: inline-block;
+        /* display: inline-block; */
     }
     .td-class {
-        position: relative; /* td를 기준으로 절대 위치 설정 */
-        padding-right: 30px; /* 오른쪽 여백을 줘서 heartImg와 겹치지 않도록 설정 */
+        /* position: relative; */
+        /* padding-right: 30px; */
     }
 
     .heartImg {

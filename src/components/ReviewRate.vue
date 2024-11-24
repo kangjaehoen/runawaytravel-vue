@@ -73,7 +73,7 @@ const props = defineProps ({
 
 // 데이터 불러오기
 onMounted(() => {
-    axios.get("http://localhost:8086/review/rate/" + props.accomNum)
+    axios.get("http://localhost:8086/api/review/rate/" + props.accomNum)
         .then((res) => {
             reviewRateData.value = res.data;
             ratingsData.value = {

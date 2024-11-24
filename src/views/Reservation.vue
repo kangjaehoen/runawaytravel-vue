@@ -76,7 +76,7 @@ const resAccom = async () => {
         if(!accomNum){
             return;
         }
-        const response= await axios.get(`http://localhost:8086/reservation/info`,{
+        const response= await axios.get(`http://localhost:8086/api/reservation/info`,{
             params: {accomNum},
         });
         if(response && response.data){
@@ -123,7 +123,7 @@ const handleOrder = async () => {
  // 예약 정보 삽입
 const insertReservation = async (reservationInfo) => {
     try {
-        const response= await axios.put(`http://localhost:8086/reservation/insertRes`, reservationInfo,{
+        const response= await axios.put(`http://localhost:8086/api/reservation/insertRes`, reservationInfo,{
             // headers: {
             //         "X-Requested-With": "XMLHttpRequest",
             //         Authorization: `${token}`, // Authorization 헤더 추가

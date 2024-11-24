@@ -1,69 +1,55 @@
 <template>
-    <div v-if="accom" class="accomCard">
-        <table>
-            <tbody>
-                <tr>
-                    <td>
-                        <img class="accimg" :src="accomimg?`${accomimg.filePath}`:'/ocean.jpg'">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h1 class="textshorten">{{ accom.accName }}</h1>
-                        <p class="textshorten">{{ accom.address }} ￦ {{ accom.price }}</p>  
-                    </td>
-                </tr>
-            </tbody>
-        </table>       
-    </div>
+
 </template>
+
 <script setup>
-import axios from 'axios';
-import { ref, watch } from 'vue';
+    import axios from 'axios';
+    import { reactive, defineProps,  defineExpose } from 'vue';
 
-const param = defineProps({
-    accom: Object,
-});
+    // const props = defineProps({
+    //     accom : Number,
+    //     required: true,
+    // })
 
-const accomimg = ref(null);
+    const wishList = reactive({
+        accomNum: 0, 
+    });
 
-const loadimg = async () => {
-    if (param.accom && param.accom.accomNum) {
+    const clickHeart = async (accomNum) => {
+    wishList.accomNum = accomNum;
+    const token = localStorage.getItem("token");
+    console.log('Token', token);
+
+    if (token) {
         try {
-            const response = await axios.get(`http://localhost:8086/getaccomimage?accomNum=${param.accom.accomNum}`);
-            accomimg.value = response.data;
-        } catch {
-            accomimg.value = null;
+            const response = await axios.delete(`http://localhost:8086/api/wish`, {
+                wishList, 
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    Authorization: `${token}`, 
+                }
+            });
+            if (response.status === 200) {
+                alert("위시리스트 삭제되었습니다.");
+            } else {
+                alert("위시리스트 삭제에 실패했습니다.");
+            }
+        } catch (error) {
+            console.error("Error removing from wishlist:", error);
+            alert("위시리스트 삭제 중 오류가 발생했습니다.");
         }
+    } else {
+        alert("로그인이 필요합니다.");
     }
 };
 
-watch(
-    () => param.accom?.accomNum,
-    (newVal, oldVal) => {
-        if (newVal !== oldVal) {
-            console.log("accomNum 변경됨");
-            loadimg();
-        }
-    },
-    { immediate: true , deep : true }
-);
+// 부모에서 메서드를 호출할 수 있도록 expose
+defineExpose({
+    clickHeart, 
+});
+
 </script>
-<style scoped>
-    .accomCard{
-        display: inline-block;
-    }
-    .accomCard:hover{
-        background-color: bisque;
-    }
-    .accimg{
-        width: 1150px;
-        height: 400px;
-    }
-    .textshorten{
-        width: 1200px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis; 
-    }
+
+<style>
+
 </style>

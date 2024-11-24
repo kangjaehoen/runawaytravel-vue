@@ -27,15 +27,17 @@
     const router = useRouter();
     const wishListDelete = ref();
 
+    console.log(dd);
+
     const fetchAccomList = () => {
-    const token = localStorage.getItem("token");
-    console.log('Token', token);  // 문제가 없으면 이 줄은 정상적으로 실행됩니다.
+    const token = sessionStorage.getItem("token");
+    console.log('Token', token); 
 
     if (token) {
-        axios.get("http://localhost:8086/wish", {
+        axios.get("http://localhost:8086/api/wish", {
             headers: {
                 "X-Requested-With": "XMLHttpRequest",
-                Authorization: `Bearer ${token}`,  // 템플릿 리터럴 사용하여 토큰 포함
+                Authorization: `${token}`, 
             }
         })
         .then((response) => {
@@ -55,7 +57,7 @@
     }
 };
 
-  onMounted(() => {
+onMounted(() => {
     fetchAccomList();
 });
 

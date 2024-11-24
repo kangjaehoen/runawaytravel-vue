@@ -3,14 +3,17 @@
         <table>
             <tbody>
                 <tr>
-                    <td>
-                        <img class="accimg" :src="accomimg?`${accomimg.filePath}`:'/ocean.jpg'" @click="goDetailPage(accom.accomNum)">
+                    <td class="accimg-container">
+                        <div class="accimg-wrapper">
+                        <img class="accimg" :src="accomimg ? `${accomimg.filePath}` : '/ocean.jpg'" 
+                            @click="goDetailPage(accom.accomNum)">
+                        <img  @click="clickHeart($event, accom.accomNum)" :src="heartImage" class="heartImg">
+                        </div>
                     </td>
                 </tr>
                 <tr>
                     <td class="td-class">
                         <p class="textshorten">{{ accom.accName }}</p> 
-                        <img @click='clickHeart($event,accom.accomNum)' :src="heartImage" class="heartImg">
                         <p class="textshorten">{{ accom.address }}</p>
                         <p>￦ {{ accom.price }}</p>
                         <WishListClickInsert ref="wishListInsert" :accom="accom.accomNum"></WishListClickInsert> 
@@ -34,6 +37,9 @@ const param = defineProps({
 
 const accomimg = ref(null);
 const heartImage = ref('');
+
+const wishListInsert =ref('');
+const wishListDelete = ref('');
 
 const loadimg = async () => {
     if (param.accom && param.accom.accomNum) {
@@ -120,10 +126,22 @@ const goDetailPage = (accnum) =>{
     .accomCard:hover{
         background-color: bisque;
     }
+    .accimg-container {
+        position: relative; /* 이미지와 하트 이미지를 겹치게 하기 위한 설정 */
+        width: 200px;
+        height: 200px;
+    }
+    .accimg-wrapper {
+        position: relative;
+        width: 200px;
+        height: 200px;
+    }
     .accimg{
         width: 200px;
         height: 200px;
     }
+ 
+
     .textshorten{
         width: 200px;
         white-space: nowrap;
@@ -131,14 +149,11 @@ const goDetailPage = (accnum) =>{
         text-overflow: ellipsis; 
         /* display: inline-block; */
     }
-    .td-class {
-        position: relative; /* td를 기준으로 절대 위치 설정 */
-        padding-right: 30px; /* 오른쪽 여백을 줘서 heartImg와 겹치지 않도록 설정 */
-    }
+ 
     .heartImg {
         position: absolute;
         right: 10px; /* 오른쪽으로 10px 떨어지게 */
-        top: 15%; 
+        top: 90%; 
         transform: translateY(-50%); /* 정확히 중앙 정렬 */
         width: 20px;
         height: 20px;

@@ -31,7 +31,7 @@ const router = createRouter({
     { path: '/wishlist', name :'wishlist', component:Wishlist, meta: { requiresAuth: true }},
     { path: '/reservation', name:'reservation', component: Reservation, meta: { requiresAuth: true } },
     { path: '/payment', name:'payment', component: Payment, meta: { requiresAuth: true } },
-    { path: '/reviewinsert/:accomNum', component:ReviewInsertPage, props:true },
+    { path: '/reviewinsert/:accomNum', name:'reviewInsert', component:ReviewInsertPage, props:true },
     {
       path: "/login",
       name: "Login",

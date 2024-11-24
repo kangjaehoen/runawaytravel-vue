@@ -202,12 +202,12 @@ if (page >= 0 && page < reviewModalData.value.totalPage) {
     reviewModalData.value.currentPage = page;
 
     if (search.value !== '') {
-        axios.get(`http://localhost:8086/review/${props.accomNum}/${search.value}?page=${page}`)
+        axios.get(`http://localhost:8086/api/review/${props.accomNum}/${search.value}?page=${page}`)
             .then((response) => {
                 reviewModalData.value = response.data;
             });
     } else {
-        axios.get(`http://localhost:8086/review/${props.accomNum}?page=${page}`)
+        axios.get(`http://localhost:8086/api/review/${props.accomNum}?page=${page}`)
             .then((response) => {
                 reviewModalData.value = response.data;
             });

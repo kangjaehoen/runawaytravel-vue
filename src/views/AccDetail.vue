@@ -9,8 +9,8 @@
     </div>
 
     <div class="row">
-        <div class="col-md-12">
-        <img :src="list.imageUrl ||  '/images/숙소1.png'" alt="숙소이미지" class="img-fluid" />
+        <div class="imagebox" @click="imagenumplus">
+            <img v-if="images.length>0" :src="images[imagenum].filePath">
         </div>
     </div>
 
@@ -175,12 +175,14 @@ const accomInfo = async () => {
             revCnt.value = response.data.revCnt;
             revRate.value = response.data.revRate;  
             reservation.value= response.data.reservation;
+            images.value = response.data.images;
 
             // JSON 문자열을 객체로 변환
             if (typeof list.value === 'string') {
                 list.value = JSON.parse(list.value); 
             }
         }
+
     } catch (error) {
         console.log('숙소정보를 불러오던 중 에러발생', error);
     }
@@ -290,6 +292,16 @@ const kidCnt = ref(0);
 const totalDays = ref(0);
 const totalPayment = ref(0);
 const guestCounterVisible = ref(true);
+
+const images = ref([]);
+const imagenum = ref(0);
+const imagenumplus = () =>{
+    if(imagenum.value<images.value.length -1 ){
+        imagenum.value ++;
+    } else {
+        imagenum.value = 0;
+    }  
+}
 
 //url 파라미터 가져오기
 const route = useRoute();
@@ -555,7 +567,12 @@ header {
 .row {
     overflow: visible; /* 팝업이 잘리지 않도록 설정 */
 }
-
-
-
+.imagebox{
+    width : 1100px;
+    height: 500px;
+}
+.imagebox img{
+    width: 100%;
+    height: 100%;
+}
 </style>

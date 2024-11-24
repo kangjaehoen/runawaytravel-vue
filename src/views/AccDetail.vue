@@ -167,7 +167,7 @@ import axios from 'axios';
 // 숙소 정보 로드 함수
 const accomInfo = async () => {
     try {
-        const response = await axios.get(`http://localhost:8086/accDetail/${accomNum}`);
+        const response = await axios.get(`http://localhost:8086/api/accDetail/${accomNum}`);
         if (response && response.data) {
             aVO.value= response.data.accom;
             list.value = response.data.accom;
@@ -195,7 +195,7 @@ const onDateChange = (value) => {
 //예약날짜 중복확인 호출
 const checkDuplicateDates = async () => {
     try{
-        const response= await axios.get(`http://localhost:8086/reservation/dateList`,{
+        const response= await axios.get(`http://localhost:8086/api/reservation/dateList`,{
             params: {accomnum : accomNum},
         });
 

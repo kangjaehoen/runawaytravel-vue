@@ -15,9 +15,4 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
-  server: {
-    proxt: {
-      "":"http://localhost:8086",
-    },
-  },
 })

@@ -1,11 +1,12 @@
 <template>
-  <label class="menu">마이페이지
-    <ul class="submenu">
+  <button class="menu" @click="myPage">마이페이지</button>
+  <label>
+  <ul class="submenu">
       <li @click="login">로그아웃</li>
       <li @click="myreservation">나의 예약 페이지</li>
       <li @click="wishListSelect">나의 위시리스트</li>
     </ul>
-  </label>
+  </label>  
 </template>
 <script setup>
 import router from '@/router';
@@ -17,5 +18,8 @@ const myreservation = () =>{
 }
 const wishListSelect = () => {
   router.push({name : "wishlist"})
+}
+const myPage = () => {
+  router.push({name: "myPage"})
 }
 </script>

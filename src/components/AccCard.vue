@@ -48,17 +48,13 @@ const loadimg = async () => {
 
 const heart = async () => { 
     const token = sessionStorage.getItem("token");
-    // console.log('Token', token);  // 문제가 없으면 이 줄은 정상적으로 실행됩니다.
-    // console.log("what the hell1");
     if (token) {
-        console.log("what the hell2");
         axios.get("http://localhost:8086/api/wish",{headers: {
                     "X-Requested-With": "XMLHttpRequest",
                     Authorization: `${token}`, 
                 }})
 
         .then((response)=>{
-            console.log(response.data.length);
             const isWishlisted = response.data.some((item) => 
                 item.accomNum.accomNum === param.accom.accomNum
             );

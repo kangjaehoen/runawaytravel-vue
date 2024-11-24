@@ -1,9 +1,6 @@
 <template>
 <div class="maincontainer">
 <div>
-    <div v-if="username">
-      반갑습니다. {{ username }}님
-    </div>
     <div class="search-bar-container">
         <div class="search-bar">
             <input type="text" v-model="searchtext" placeholder="검색할 내용을 입력해주세요." required @keyup.enter="searchacc(searchtext)">
@@ -34,7 +31,6 @@ import AccCard from "@/components/AccCard.vue";
 import AccCardStretched from "@/components/AccCardStretched.vue";
 import axios from "axios";
 import { onMounted, reactive, ref } from "vue";
-import { jwtDecode } from "jwt-decode";
 const accoms = reactive([]);
 const searchtext = ref('');
 const searched = ref('');
@@ -108,24 +104,6 @@ onMounted(()=>{
     getrandomaccoms();
     getrandomone();
 })
-
-const username = ref("");
-
-// onMounted(() => {
-
-//   const token = sessionStorage.getItem("token");
-
-//   if (token) {
-//     try {
-//       const decodedToken = jwtDecode(token); //토큰 디코딩
-//       username.value = decodedToken.username; //유저이름 꺼내기
-//     } catch (error) {
-//       console.error("Invalid token:", error); 
-//     }
-//   } else {
-//     console.log("No token found");
-//   }
-// });
 </script>
 <style scoped>
     .accomCardContainer{

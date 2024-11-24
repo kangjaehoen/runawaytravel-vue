@@ -55,6 +55,7 @@ const state = reactive({
 });
 const salestatus = ["판매중지","판매중"];
 const Currentpage = ref(0);
+const token = sessionStorage.getItem("token");
 const nextpage = ()=>{
     if(Currentpage.value<state.Totalpage -1){
         Currentpage.value++;
@@ -75,9 +76,6 @@ const searchmine = () =>{
 const router = useRouter();
 
 const getData = () => {
-    const token = sessionStorage.getItem("token");
-    console.log('Token', token);
-    
     if (token) {
         axios
             .post('http://localhost:8086/myaccomtable', {
@@ -123,7 +121,10 @@ const checkchange = (e)=>{
 const checkedonsalechange = async() =>{
     if(checklist.value.length != 0){
         await axios
-        .post("http://localhost:8086/changeonsale",checklist.value)
+        .post("http://localhost:8086/changeonsale",checklist.value,{headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    Authorization: `${token}`, 
+                }})
         .then((response)=>console.log(response.data));
     }
     getData();

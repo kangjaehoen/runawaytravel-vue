@@ -145,7 +145,7 @@
         try {
             // POST 요청
             const response = await axios.post(
-                "http://localhost:8086/review",
+                "http://localhost:8086/api/review",
                 reviewData, // 리뷰 데이터
                 {
                     headers: {

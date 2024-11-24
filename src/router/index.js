@@ -13,6 +13,8 @@ import Wishlist from '@/views/WishList.vue';
    import LoginView from '../views/LoginView.vue';
    import JoinView from '../views/JoinView.vue';
    import Logout from '../views/Logout.vue';
+import SignForm from '@/components/SignInForm.vue';
+import SignUpForm from '@/components/SignUpForm.vue';
 
 
 
@@ -32,23 +34,11 @@ const router = createRouter({
     { path: '/wishlist', name :'wishlist', component:Wishlist},
     { path: '/reservation', name:'reservation', component: Reservation, meta: { requiresAuth: true } },
     { path: '/payment', name:'payment', component: Payment, meta: { requiresAuth: true } },
-    {
-      path: "/login",
-      name: "Login",
-      component: LoginView,
-      props:true
-    },
-    {
-      path: "/join",
-      name: "Join",
-      component: JoinView,
-    },
-    {
-      path: "/logout",
-      name: "Logout",
-      component: Logout,
-      meta: { requiresAuth: true } 
-    }
+    { path: "/login", name: "Login", component: LoginView, props:true},
+    { path: "/join", name: "Join", component: JoinView},
+    { path: "/logout", name: "Logout", component: Logout, meta: { requiresAuth: true }},
+    { path: "/signin", name: "signin", component: SignForm},
+    { path: "/signup", name: "signup", component: SignUpForm},
   ],
 })
 // function isAuthenticated() {

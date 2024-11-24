@@ -22,19 +22,22 @@
     import { onMounted, ref, watch } from 'vue';
     import axios from 'axios';
     import { useRouter } from 'vue-router';
+    import { jwtDecode } from "jwt-decode";
 
     const accomList =ref([]);
     const router = useRouter();
     const wishListDelete = ref();
 
-    console.log(dd);
 
     const fetchAccomList = () => {
     const token = sessionStorage.getItem("token");
     console.log('Token', token); 
+    const decodedToken = jwtDecode(token); 
+    let userName = decodedToken.username || "";
+    console.log(userName);
 
     if (token) {
-        axios.get("http://localhost:8086/api/wish", {
+        axios.get("http://localhost:8086/api/wish/"+userName, {
             headers: {
                 "X-Requested-With": "XMLHttpRequest",
                 Authorization: `${token}`, 

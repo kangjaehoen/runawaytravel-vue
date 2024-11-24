@@ -20,9 +20,7 @@
         </table>       
     </div>
 </template>
-
 <script setup>
-
 import axios from 'axios';
 import { ref, watch } from 'vue';
 import router from '@/router';
@@ -36,21 +34,14 @@ const emit = defineEmits(
 const buttonnumber = ref(0);
 const accomimg = ref(null);
 
-
-    const clickHeart = async (accomNum) => {
-    wishList.accomNum = accomNum;
-    const token = localStorage.getItem("token");
-    console.log('Token', token);
-
-    if (token) {
+const loadimg = async () => {
+    if (param.accom && param.accom.accomNum) {
         try {
             const response = await axios.get(`http://localhost:8086/api/getaccomimage?accomNum=${param.accom.accomNum}`);
             accomimg.value = response.data;
         } catch {
             accomimg.value = null;
         }
-    } else {
-        alert("로그인이 필요합니다.");
     }
 };
 

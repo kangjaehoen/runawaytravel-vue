@@ -26,12 +26,14 @@ import axios from 'axios';
 import { ref, watch } from 'vue';
 import WishListClickInsert from '@/components/WishListClickInsert.vue'
 import WishListClickDelete from '@/components/WishListClickDelete.vue'
-
+import router from '@/router';
+import { jwtDecode } from "jwt-decode";
 const param = defineProps({
     accom: Object,
 });
 
 const accomimg = ref(null);
+const heartImage = ref('');
 
 const loadimg = async () => {
     if (param.accom && param.accom.accomNum) {
@@ -45,11 +47,14 @@ const loadimg = async () => {
 };
 
 const heart = async () => { 
-    const token = localStorage.getItem("token");
-    console.log('Token', token);  // 문제가 없으면 이 줄은 정상적으로 실행됩니다.
+    const token = sessionStorage.getItem("token");
+    console.log('Token', token); 
+    const decodedToken = jwtDecode(token); 
+    let userName = decodedToken.username || "";
+    console.log(userName); // 문제가 없으면 이 줄은 정상적으로 실행됩니다.
 
     if (token) {
-        axios.get("http://localhost:8086/wish", {
+        axios.get("http://localhost:8086/api/wish/"+userName, {
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
                     Authorization: `${token}`,

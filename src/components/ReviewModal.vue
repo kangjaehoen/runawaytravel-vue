@@ -97,7 +97,9 @@
 import axios from 'axios';
 import { ref, defineExpose ,defineProps, watch, onMounted , computed  } from 'vue';
 
-let num = 75;
+    let num = 75;
+
+
 
     const props = defineProps({
     reviewRateData: {
@@ -159,8 +161,6 @@ const reviewModalData = ref({
     const maxVisiblePages = 5; // 최대 보여줄 페이지 버튼 수
     const startPage = Math.floor(currentPage / maxVisiblePages) * maxVisiblePages + 1; 
     const endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
-
-    // startPage부터 endPage까지의 배열 생성
     return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
 });
 
@@ -168,11 +168,12 @@ const search = ref('');
 
 const searchReviews = () => {
 
-
     reviewModalData.value.currentPage = 0;
 
     if(search.value != ''){
-        axios.get(`http://localhost:8086/api/review/${props.accomNum}/${search.value}?page=${reviewModalData.value.currentPage}`)
+        axios.get(`http://localhost:8086/api/review/${props.accomNum}/${search.value}?page=${reviewModalData.value.currentPage}`,{
+            
+        })
             .then((response) => {
             reviewModalData.value = response.data;
         });
@@ -196,23 +197,23 @@ onMounted(()=> {
 
 
 const goToPage = (page) => {
-    
-    if (page >= 0 && page < reviewModalData.value.totalPage) {
-        reviewModalData.value.currentPage = page;
 
-        if (search.value !== '') {
-            axios.get(`http://localhost:8086/review/${props.accomNum}/${search.value}?page=${reviewModalData.value.currentPage}`)
-                .then((response) => {
-                    reviewModalData.value = response.data;
-                });
-        } else {
-            axios.get(`http://localhost:8086/review/${props.accomNum}?page=${reviewModalData.value.currentPage}`)
-                .then((response) => {
-                    reviewModalData.value = response.data;
-                });
-        }
-        
+if (page >= 0 && page < reviewModalData.value.totalPage) {
+    reviewModalData.value.currentPage = page;
+
+    if (search.value !== '') {
+        axios.get(`http://localhost:8086/review/${props.accomNum}/${search.value}?page=${page}`)
+            .then((response) => {
+                reviewModalData.value = response.data;
+            });
+    } else {
+        axios.get(`http://localhost:8086/review/${props.accomNum}?page=${page}`)
+            .then((response) => {
+                reviewModalData.value = response.data;
+            });
     }
+
+}
 };
 
 const closeModal = () => {

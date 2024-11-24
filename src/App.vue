@@ -21,4 +21,7 @@ import Footer from './components/Footer.vue';
     font-weight: 700;
     font-style: normal;
 }
+*{
+  font-family: 'NPSfontBold';
+}
 </style>

@@ -28,6 +28,7 @@
     if (token) {
         try {
             const response = await axios.delete("http://localhost:8086/api/wish/"+wishList.userName+"/"+wishList.accomNum,  {
+
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
                     Authorization: `${token}`, 

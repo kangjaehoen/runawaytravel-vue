@@ -1,19 +1,41 @@
 <template>
-
+    <div v-if="accom" class="accomCard">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="accimgbox">
+                        <img :src="accomimg?`${accomimg.filePath}`:'/ocean.jpg'" @click="goDetailPage(accom.accomNum)">
+                        <div>
+                            <button v-for="ao in 6" @click.stop="stretchedbutton(ao - 1)" :class="ao-1==buttonnumber?'y':''"></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h1 class="textshorten">{{ accom.accName }}</h1>
+                        <p class="textshorten">{{ accom.address }} ￦ {{ accom.price }}</p>  
+                    </td>
+                </tr>
+            </tbody>
+        </table>       
+    </div>
 </template>
 
 <script setup>
-    import axios from 'axios';
-    import { reactive, defineProps,  defineExpose } from 'vue';
 
-    // const props = defineProps({
-    //     accom : Number,
-    //     required: true,
-    // })
+import axios from 'axios';
+import { ref, watch } from 'vue';
+import router from '@/router';
 
-    const wishList = reactive({
-        accomNum: 0, 
-    });
+const param = defineProps({
+    accom: Object,
+});
+const emit = defineEmits(
+    ['stretchedbutton']
+)
+const buttonnumber = ref(0);
+const accomimg = ref(null);
+
 
     const clickHeart = async (accomNum) => {
     wishList.accomNum = accomNum;
@@ -22,34 +44,72 @@
 
     if (token) {
         try {
-            const response = await axios.delete(`http://localhost:8086/api/wish`, {
-                wishList, 
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    Authorization: `${token}`, 
-                }
-            });
-            if (response.status === 200) {
-                alert("위시리스트 삭제되었습니다.");
-            } else {
-                alert("위시리스트 삭제에 실패했습니다.");
-            }
-        } catch (error) {
-            console.error("Error removing from wishlist:", error);
-            alert("위시리스트 삭제 중 오류가 발생했습니다.");
+            const response = await axios.get(`http://localhost:8086/api/getaccomimage?accomNum=${param.accom.accomNum}`);
+            accomimg.value = response.data;
+        } catch {
+            accomimg.value = null;
         }
     } else {
         alert("로그인이 필요합니다.");
     }
 };
 
-// 부모에서 메서드를 호출할 수 있도록 expose
-defineExpose({
-    clickHeart, 
-});
+watch(
+    () => param.accom?.accomNum,
+    (newVal, oldVal) => {
+        if (newVal !== oldVal) {
+            loadimg();
+        }
+    },
+    { immediate: true , deep : true }
+);
+// watch(()=>buttonnumber.value,(newVal, oldVal)=>{
+//     if(newVal !== oldVal){
+//         console.log(oldVal+"->"+newVal);
+//     }
+// })
 
+const stretchedbutton = (e) =>{
+    buttonnumber.value = e;
+    emit('stretchedbutton',e);
+}
+const goDetailPage = (accnum) =>{
+    router.push(`/accDetail/${accnum}`)
+}
 </script>
-
-<style>
-
+<style scoped>
+    .accomCard{
+        display: inline-block;
+    }
+    .accomCard:hover{
+        cursor: pointer;
+        text-decoration-line: underline;
+    }
+    .accimgbox{
+        position: relative;
+    }
+    .accimgbox div{
+        position: absolute;
+        bottom: 30px;
+        right: 60px;
+    }
+    .accimgbox img{
+        width: 1150px;
+        height: 400px;
+    }
+    .accimgbox button{
+        display: inline-block;
+        border-radius: 25px;
+        width: 10px;
+        height: 10px;
+    }
+    .textshorten{
+        width: 1200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; 
+    }
+    .y{
+        background-color: darkcyan;
+    }
 </style>

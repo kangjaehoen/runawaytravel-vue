@@ -65,7 +65,7 @@ const totalPayment = ref(route.query.totalPayment);
 const revCnt= ref(0);
 const revRate= ref('');
 const accom= ref({});
-const accomnum = ref(route.query.accomnum);
+const accomNum = ref(route.query.accomnum);
 const reservation = ref([]);
 const reservationInfo= ref({});
 
@@ -76,7 +76,7 @@ const resAccom = async () => {
         if(!accomNum){
             return;
         }
-        const response= await axios.get(`http://localhost:8086/api/reservation/info`,{
+        const response= await axios.get(`http://localhost:8086/reservation/info`,{
             params: {accomNum},
         });
         if(response && response.data){
@@ -123,7 +123,7 @@ const handleOrder = async () => {
  // 예약 정보 삽입
 const insertReservation = async (reservationInfo) => {
     try {
-        const response= await axios.put(`http://localhost:8086/api/reservation/insertRes`, reservationInfo,{
+        const response= await axios.put(`http://localhost:8086/reservation/insertRes`, reservationInfo,{
             // headers: {
             //         "X-Requested-With": "XMLHttpRequest",
             //         Authorization: `${token}`, // Authorization 헤더 추가
@@ -143,16 +143,37 @@ const insertReservation = async (reservationInfo) => {
     }
 };
 
+
+
+
 // 결제 정보 삽입
-const insertPayment = async (payInfo) => {
-    try {
-        await axios.put(`http://localhost:8086/api/payment`, payInfo);
-        alert('결제가 성공적으로 완료되었습니다.');
-        window.location.href = '/';
-    } catch (error) {
-        alert('결제 insert 실패');
+const insertPayment = (payInfo) => {
+    const token = sessionStorage.getItem("token");
+    if (token) {
+        return axios
+            .put(`http://localhost:8086/api/payment`, payInfo, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    Authorization: `${token}`, // Authorization 헤더 추가
+                },
+            })
+            .then(() => {
+                alert("결제가 성공적으로 완료되었습니다.");
+                window.location.href = "/"; // 홈 화면으로 이동
+                return true;
+            })
+            .catch((error) => {
+                alert("결제 insert 실패");
+                console.error("Error:", error.response || error);
+                return false;
+            });
+    } else {
+        alert("로그인 토큰이 없습니다. 다시 로그인해주세요.");
+        return Promise.resolve(false); // Promise 반환
     }
 };
+
+
 
 // 결제 처리 함수
 const processPayment = () => {
@@ -160,6 +181,20 @@ if(!window.IMP){
     console.error("아임포트 SDK가 로드되지 않았습니다.");
     return;
 }
+
+// 토큰에서 사용자 정보 추출
+const token = sessionStorage.getItem("token");
+let username = ""; // username 변수 선언
+
+if (token) {
+    try {
+        const decodedToken = jwtDecode(token); // jwtDecode를 통해 토큰 디코딩
+        username = decodedToken.username || ""; // username 값을 추출
+    } catch (error) {
+        console.error("토큰 디코딩 중 에러 발생:", error);
+    }
+}
+
 window.IMP.init('imp16048664'); // 가맹점 식별코드
 window.IMP.request_pay(
     {
@@ -172,7 +207,7 @@ window.IMP.request_pay(
     buyer_name: '수민짱',
     buyer_tel: '010-1234-5678',
     buyer_addr: '서울 송파구 중대로 135 it벤처타워',
-    buyer_postcode: '123-456',
+    buyer_postcode: '123-456'
     },
     (res) => {
     if (res.success) {
@@ -185,6 +220,7 @@ window.IMP.request_pay(
         name: accom.value.accName,
         resNum: reservationInfo.value.resNum,
         apply_num: res.apply_num,
+        username: username
         };
 
         if(res.apply_num){

@@ -71,23 +71,25 @@ const reservationInfo= ref({});
 
 //query전달 외 accom정보들
 const resAccom = async () => {
-  try {
-    const accomNum = route.query.accomnum || '';
-    if (!accomNum) {
-      return;
+    try{
+        const accomNum = route.query.accomnum || '';
+        if(!accomNum){
+            return;
+        }
+        const response= await axios.get(`http://localhost:8086/reservation/info`,{
+            params: {accomNum},
+        });
+        if(response && response.data){
+            revCnt.value= response.data.revCnt;
+            revRate.value= response.data.revRate;
+            accom.value= response.data.accom;
+            reservation.value= response.data.reservation;
+        }
+    
+    }catch(error){
+        console.error("숙소 정보를 불러오던 중 에러발생", error.response || error);
     }
-    const response = await axios.get(`http://localhost:8086/api/reservation/info`, {
-      params: { accomNum },
-    });
-    if (response && response.data) {
-      revCnt.value = response.data.revCnt;
-      revRate.value = response.data.revRate;
-      accom.value = response.data.accom;
-      reservation.value = response.data.reservation;
-    }
-  } catch (error) {
-    console.error("숙소 정보를 불러오던 중 에러발생", error.response || error);
-  }
+
 };
 
 
@@ -119,35 +121,25 @@ const handleOrder = async () => {
 
 
  // 예약 정보 삽입
-const insertReservation = (reservationInfo) => {
-    const token = sessionStorage.getItem("token");
-    if (token) {
-        return axios
-            .put(
-                `http://localhost:8086/api/reservation/insertRes`,
-                reservationInfo,
-                {
-                    headers: {
-                        "X-Requested-With": "XMLHttpRequest",
-                        Authorization: `${token}`, // Authorization 헤더 추가
-                    },
-                }
-            )
-            .then((response) => {
-                if (response && response.data) {
-                    reservationInfo.resNum = response.data.resNum;
-                    alert("예약이 성공적으로 완료되었습니다.");
-                    return true;
-                }
-            })
-            .catch((error) => {
-                alert("예약에 실패했습니다.");
-                console.error("Error:", error.response || error);
-                return false;
-            });
-    } else {
-        alert("로그인 토큰이 없습니다. 다시 로그인해주세요.");
-        return Promise.resolve(false); // Promise 반환을 유지하기 위해 resolve로 처리
+const insertReservation = async (reservationInfo) => {
+    try {
+        const response= await axios.put(`http://localhost:8086/reservation/insertRes`, reservationInfo,{
+            // headers: {
+            //         "X-Requested-With": "XMLHttpRequest",
+            //         Authorization: `${token}`, // Authorization 헤더 추가
+            //     },
+            }
+        );
+
+        if(response && response.data){
+            reservationInfo.resNum=response.data.resNum;
+            alert('예약이 성공적으로 완료되었습니다.');
+            return true;
+        }
+    } catch (error) {
+        alert('예약에 실패했습니다.');
+        console.error("Error:", error);
+        return false;
     }
 };
 

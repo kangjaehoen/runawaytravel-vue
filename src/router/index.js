@@ -9,6 +9,7 @@ import Reservation from '@/views/Reservation.vue';
 import Payment from '@/views/Payment.vue';
 import SellerPage from '@/pages/SellerPage.vue';
 import ReviewInsertPage from '@/pages/ReviewInsertPage.vue';
+
 import Wishlist from '@/views/WishList.vue';
    import LoginView from '../views/LoginView.vue';
    import JoinView from '../views/JoinView.vue';
@@ -18,11 +19,11 @@ import SignUpForm from '@/components/SignUpForm.vue';
 
 
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/reviewInsert/:accomNum', component:ReviewInsertPage, meta: { requiresAuth: true } },
-    { path: '/seller', name : 'seller', component : SellerPage, meta: { requiresAuth: true },
+    { path: '/seller', name : 'seller', component : SellerPage,
       children : [
         { path: 'myacc', name : 'myacc', component: MyAcc },
         { path: 'accreg', name : 'accreg', component: AccReg},
@@ -31,7 +32,7 @@ const router = createRouter({
     },
     { path: '/', name: 'main', component: Main },
     { path: '/accDetail/:accomNum', name:'accDetail', component: AccDetail, props:true},
-    { path: '/wishlist', name :'wishlist', component:Wishlist},
+    { path: '/wishlist', name :'wishlist', component:Wishlist, meta: { requiresAuth: true }},
     { path: '/reservation', name:'reservation', component: Reservation, meta: { requiresAuth: true } },
     { path: '/payment', name:'payment', component: Payment, meta: { requiresAuth: true } },
     { path: "/login", name: "Login", component: LoginView, props:true},
@@ -39,6 +40,8 @@ const router = createRouter({
     { path: "/logout", name: "Logout", component: Logout, meta: { requiresAuth: true }},
     { path: "/signin", name: "signin", component: SignForm},
     { path: "/signup", name: "signup", component: SignUpForm},
+    { path: "/reviewInsert", name:"reviewInsert",component:ReviewInsertPage }
+
   ],
 })
 // function isAuthenticated() {

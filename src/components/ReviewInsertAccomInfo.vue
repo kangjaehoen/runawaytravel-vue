@@ -25,13 +25,14 @@ import { jwtDecode } from "jwt-decode";
 
 const route = useRoute(); 
 const accomNum = route.params.accomNum; 
+console.log(accomNum);
 
 const list = ref({});
 const aVO = ref({});
 
 const accomInfo = async () => {
 try {
-    const response = await axios.get(`http://localhost:8086/accDetail/${accomNum}`);
+    const response = await axios.get(`http://localhost:8086/api/accDetail/${accomNum}`);
     if (response && response.data) {
         aVO.value= response.data.accom;
         list.value = response.data.accom;

@@ -78,7 +78,7 @@ const router = useRouter();
 const getData = () => {
     if (token) {
         axios
-            .post('http://localhost:8086/myaccomtable', {
+            .post('http://localhost:8086/api/myaccomtable', {
                 key: state.Search,
                 page: Currentpage.value,
             },{headers: {

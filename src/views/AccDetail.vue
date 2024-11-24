@@ -165,7 +165,6 @@ import GuestCounter from '@/components/GuestCounter.vue';
 import axios from 'axios';
 import ReviewPage from '@/pages/ReviewPage.vue';
 
-
 // 숙소 정보 로드 함수
 const accomInfo = async () => {
     try {

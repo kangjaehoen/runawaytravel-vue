@@ -140,7 +140,7 @@ const url = (e,url) =>{
     }
     if(token){
     axios
-    .post(`http://localhost:8086/${url}`,formdata, {headers:
+    .post(`http://localhost:8086/api/${url}`,formdata, {headers:
         {
             "X-Requested-With": "XMLHttpRequest",
             Authorization: `${token}`

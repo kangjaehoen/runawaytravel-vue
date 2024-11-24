@@ -43,6 +43,7 @@
                 <th>결제상품</th>
                 <th>결제 금액</th>
                 <th>상태</th>
+                <th>리뷰</th>
             </tr>
             </thead>
             <tbody>
@@ -57,6 +58,7 @@
                     <td>{{ payment.name }}</td>
                 <td>{{ payment.amount }}</td>
                 <td>{{ payment.pay_Status === 'Y' ? '결제완료' : '환불완료' }}</td>
+                <td @click="review(payment.accomNum.accomNum)">리뷰 등록</td>
             </tr>
             </tbody>
         </table>
@@ -75,6 +77,7 @@
     import { ref, reactive, onMounted } from 'vue';
     import { jwtDecode } from "jwt-decode";
     import axios from 'axios';
+    import { useRouter } from 'vue-router';
     
     const selectedYear = ref('');
     const selectedMonth = ref('');
@@ -153,7 +156,9 @@
             },
         })
         .then((response) => {
+                
             if (response && response.data) {
+                console.log(response.data);
                 paymentList.value = response.data.content || [];
                 totalPages.value = response.data.totalPages || 1;
                 currentPage.value = response.data.currentPage || 0;
@@ -219,6 +224,13 @@
     onMounted(() => {
         searchPayments();
     });
+
+    const router = useRouter(); // useRouter를 사용하여 router 객체를 가져옴
+
+    const review = (accomNum) => {
+      
+        router.push({ name: 'reviewInsert', params: { accomNum } });
+    };
     </script>
     
     <style scoped>

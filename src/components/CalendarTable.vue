@@ -77,6 +77,7 @@ import CalendarOneDetail from './CalendarOneDetail.vue';
                     "X-Requested-With": "XMLHttpRequest",
                     Authorization: `${token}`, 
                 }})
+
         .then((response)=>{
             reslist.splice(0,reslist.length, ...response.data.resmonth);
             //console.log(reslist)

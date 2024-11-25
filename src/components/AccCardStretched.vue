@@ -4,7 +4,7 @@
             <tbody>
                 <tr>
                     <td class="accimgbox">
-                        <img :src="accomimg?`${accomimg.filePath}`:'/ocean.jpg'" @click="goDetailPage(accom.accomNum)">
+                        <img :src="accomimg?`${accomimg.filePath}`:'/regformpic.png'" @click="goDetailPage(accom.accomNum)">
                         <div>
                             <button v-for="ao in 6" @click.stop="stretchedbutton(ao - 1)" :class="ao-1==buttonnumber?'y':''"></button>
                         </div>

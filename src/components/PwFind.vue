@@ -1,58 +1,59 @@
-<template>
-    <div>
-      <h2>비밀번호 찾기</h2>
-      <form @submit.prevent="pwFind">
-        <label>
-          아이디
-          <input
-            type="text"
-            name="username"
-            v-model="state.form.username"
-            placeholder="(필수)"
-            required
-          />
-        </label>
-        <br />
-        <label>
-          이름
-          <input
-            type="text"
-            name="name"
-            v-model="state.form.name"
-            placeholder="(필수)"
-            required
-          />
-        </label>
-        <br />
-        <label>
-          생년월일
-          <input
-            type="date"
-            name="birth"
-            v-model="state.form.birth"
-            placeholder="YY/MM/DD"
-            required
-          />
-        </label>
-        <br />
-        <label>
-          이메일
-          <input
-            type="email"
-            name="email"
-            v-model="state.form.email"
-            placeholder="example@email.com"
-            required
-          />
-        </label>
-        <br />
-        <button type="submit">확인</button>
-      </form>
-  
-      <!-- 결과 메시지 -->
-      <p v-if="state.message">{{ state.message }}</p>
-    </div>
-  </template>
+
+<template><div class="box">
+  <div class="container">
+    <h2>비밀번호 찾기</h2>
+    <form @submit.prevent="pwFind">
+      <label>
+        아이디
+        <input
+          type="text"
+          name="username"
+          v-model="state.form.username"
+          placeholder="(필수)"
+          required
+        />
+      </label>
+      <label>
+        이름
+        <input
+          type="text"
+          name="name"
+          v-model="state.form.name"
+          placeholder="(필수)"
+          required
+        />
+      </label>
+      <label>
+        생년월일
+        <input
+          type="date"
+          name="birth"
+          v-model="state.form.birth"
+          placeholder="YY/MM/DD"
+          required
+        />
+      </label>
+      <label>
+        이메일
+        <input
+          type="email"
+          name="email"
+          v-model="state.form.email"
+          placeholder="example@email.com"
+          required
+        />
+      </label>
+      <button type="submit">확인</button>
+    </form>
+
+    <p :class="{ success: state.message.includes('임시 비밀번호') }">
+      {{ state.message }}
+    </p>
+  </div>
+</div>
+</template>
+
+
   
   <script setup>
   import axios from "axios";
@@ -70,7 +71,8 @@
   
   const pwFind = async () => {
     try {
-      const response = await axios.post("/api/PwFind", state.form, {
+      const response = await axios.post("http://localhost:8086/api/PwFind", state.form, {
+
         headers: {
           "X-Requested-With": "XMLHttpRequest",
           "Content-Type": "application/json"
@@ -94,26 +96,80 @@
   </script>
   
   <style scoped>
+
+    .box{
+  min-height: 700px;
+}
+  .container {
+    width: 100%;
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+  }
+  
   h2 {
+    text-align: center;
     margin-bottom: 20px;
+    font-size: 20px;
+    color: #333;
   }
   
   form {
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
   }
   
   label {
-    display: block;
-    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+  }
+  
+  input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  input:focus {
+    border-color: #8dbf3d;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
   }
   
   button {
-    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    background-color: #8dbf3d;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  button:hover {
+    background-color: #45a049;
   }
   
   p {
-    color: green;
-    font-weight: bold;
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #d9534f;
+  }
+  
+  p.success {
+    color: #28a745;
   }
   </style>
   

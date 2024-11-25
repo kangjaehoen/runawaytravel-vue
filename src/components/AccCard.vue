@@ -5,7 +5,7 @@
                 <tr>
                     <td class="accimg-container">
                         <div class="accimg-wrapper">
-                        <img class="accimg" :src="accomimg ? `${accomimg.filePath}` : '/ocean.jpg'" 
+                        <img class="accimg" :src="accomimg ? `${accomimg.filePath}` : '/regformpic.png'" 
                             @click="goDetailPage(accom.accomNum)">
                         <img v-if="isLoggedIn" @click="clickHeart($event, accom.accomNum)" :src="heartImage" class="heartImg">
                         </div>
@@ -58,15 +58,8 @@ const heart = async () => {
     if(isLoggedIn.value){
         const decodedToken = jwtDecode(token); 
         let userName = decodedToken.username || "";
-        console.log(userName); // 문제가 없으면 이 줄은 정상적으로 실행됩니다.
-
         if (token) {
-            axios.get("http://localhost:8086/api/wish/"+userName, {
-                    headers: {
-                        "X-Requested-With": "XMLHttpRequest",
-                        Authorization: `${token}`,
-                    }
-                })
+            axios.get("http://localhost:8086/api/wish/"+userName)
             .then((response)=>{
                 const isWishlisted = response.data.some((item) => 
                     item.accomNum.accomNum === param.accom.accomNum

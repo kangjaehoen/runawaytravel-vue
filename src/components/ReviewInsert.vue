@@ -76,7 +76,9 @@
     import axios from 'axios';
     import { reactive, ref , defineProps } from 'vue';
     import { jwtDecode } from "jwt-decode";
+    import { useRouter } from 'vue-router'; // useRouter 가져오기
 
+    const router = useRouter();
     const reviewContent = ref("");
 
     const token = sessionStorage.getItem("token");
@@ -160,6 +162,7 @@
                 });
             if (response.status === 200) {
                 alert("리뷰가 등록되었습니다.");
+                router.push({ name: "payment" });
             } else {
                 alert("리뷰 등록에 실패했습니다.");
             }

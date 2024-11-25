@@ -1,4 +1,3 @@
-
 import { createRouter, createWebHistory } from 'vue-router'
 import MyAcc from '@/pages/MyAcc.vue'
 import AccReg from '@/pages/AccReg.vue'
@@ -9,14 +8,11 @@ import Reservation from '@/views/Reservation.vue';
 import Payment from '@/views/Payment.vue';
 import SellerPage from '@/pages/SellerPage.vue';
 import ReviewInsertPage from '@/pages/ReviewInsertPage.vue';
-
 import Wishlist from '@/views/WishList.vue';
-
 import SignForm from '@/components/SignInForm.vue';
 import SignUpForm from '@/components/SignUpForm.vue';
-   import MyPage from '../views/MyPage.vue';
-   import EditProfile from '@/views/EditProfile.vue';
-   import UsernameFind from '@/components/UsernameFind.vue';
+import MyPage from '../views/MyPage.vue';
+import UsernameFind from '@/components/UsernameFind.vue';
 import PwFind from '@/components/PwFind.vue';
 
 
@@ -38,28 +34,21 @@ const router = createRouter({
     { path: '/payment', name:'payment', component: Payment, meta: { requiresAuth: true } },
     { path: "/signin", name: "signin", component: SignForm},
     { path: "/signup", name: "signup", component: SignUpForm},
-    { path: "/pwFind", name: "PwFind", component: PwFind },
-    { path: "/UsernameFind", name: "UsernameFind", component: UsernameFind },
-    { path: "/reviewInsert", name:"reviewInsert",component:ReviewInsertPage },
-    {
-      path: "/mypage",
-      name: "myPage",
-      component: MyPage,
-    },
-    {
-      path: "/editProfile",
-      name: "EditProfile",
-      component: EditProfile,
-    }
+    { path: "/pwFind", name: "pwFind", component: PwFind },
+    { path: "/UsernameFind", name: "usernameFind", component: UsernameFind },
+    { path: "/reviewInsert:accomNum", name:"reviewInsert",component:ReviewInsertPage },
+    { path: "/mypage", name: "myPage", component: MyPage},
 
   ],
 })
+
 // function isAuthenticated() {
 //   return !!sessionStorage.getItem('token'); // JWT 토큰 유무로 인증 확인
 // }
 
 
-// const allowedPages = ['main', 'Login', 'Join', 'accDetail', 'myPage', 'UsernameFind', 'PwFind']; // 허용된 페이지 이름
+
+// const allowedPages = ['main', 'signin', 'signup', 'accDetail', 'myPage', 'usernameFind', 'pwFind']; // 허용된 페이지 이름
 // // 글로벌 가드
 // router.beforeEach((to, from, next) => {
 //   if (allowedPages.includes(to.name)) {

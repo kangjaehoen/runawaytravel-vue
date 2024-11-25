@@ -13,7 +13,7 @@
             <p>게스트: 성인 {{ adultCnt }}명<span v-if="kidCnt > 0">, 어린이 {{ kidCnt }}명</span></p>
         </div>
         <div class="price-details">
-            <img src="/images/room.png" alt="서울의 호스텔" class="room-image" />
+            <img :src="images.length==0?'/regformpic.png':images[imagenum].filePath">
             <div class="price-texts">
             <p>{{ accom?.accName }}</p>
             <p>★ {{ revRate }} 후기({{ revCnt }}개)</p>
@@ -37,8 +37,7 @@
         </p>
         </div>
         <div class="basic-rules">
-        <p><strong>이용규칙</strong></p>
-        <p>{{ accom?.accomRule }}</p>
+        <p v-if="accom?.accomRule">이용규칙<br> {{ accom.accomRule }}</p>
         </div>
     </div>
     </div>
@@ -69,6 +68,9 @@ const accomNum = ref(route.query.accomnum);
 const reservation = ref([]);
 const reservationInfo= ref({});
 
+const images = ref([]);
+const imagenum = ref(0);
+
 //query전달 외 accom정보들
 const resAccom = async () => {
     try{
@@ -76,7 +78,7 @@ const resAccom = async () => {
         if(!accomNum){
             return;
         }
-        const response= await axios.get(`http://localhost:8086/reservation/info`,{
+        const response= await axios.get(`http://localhost:8086/api/reservation/info`,{
             params: {accomNum},
         });
         if(response && response.data){
@@ -121,28 +123,36 @@ const handleOrder = async () => {
 
 
  // 예약 정보 삽입
-const insertReservation = async (reservationInfo) => {
-    try {
-        const response= await axios.put(`http://localhost:8086/reservation/insertRes`, reservationInfo,{
-            // headers: {
-            //         "X-Requested-With": "XMLHttpRequest",
-            //         Authorization: `${token}`, // Authorization 헤더 추가
-            //     },
-            }
-        );
-
-        if(response && response.data){
-            reservationInfo.resNum=response.data.resNum;
-            alert('예약이 성공적으로 완료되었습니다.');
-            return true;
-        }
-    } catch (error) {
-        alert('예약에 실패했습니다.');
-        console.error("Error:", error);
-        return false;
+const insertReservation = (reservationInfo) => {
+    const token = sessionStorage.getItem("token");
+    if (token) {
+        return axios
+            .put(
+                `http://localhost:8086/api/reservation/insertRes`,
+                reservationInfo,
+                {
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        Authorization: `${token}`, // Authorization 헤더 추가
+                    },
+             })
+            .then((response) => {
+                if (response && response.data) {
+                    reservationInfo.resNum = response.data.resNum;
+                    alert("예약이 성공적으로 완료되었습니다.");
+                    return true;
+                }
+            })
+            .catch((error) => {
+                alert("예약에 실패했습니다.");
+                console.error("Error:", error.response || error);
+                return false;
+            });
+    } else {
+        alert("로그인 토큰이 없습니다. 다시 로그인해주세요.");
+        return Promise.resolve(false); // Promise 반환을 유지하기 위해 resolve로 처리
     }
 };
-
 
 
 
@@ -313,7 +323,7 @@ margin: 20px 0;
             background-color: white;
         }
 
-        .room-image {
+        .price-details img {
             width: 150px;
             height: 150px;
             object-fit: cover;

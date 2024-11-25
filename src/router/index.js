@@ -16,7 +16,8 @@ import SignForm from '@/components/SignInForm.vue';
 import SignUpForm from '@/components/SignUpForm.vue';
    import MyPage from '../views/MyPage.vue';
    import EditProfile from '@/views/EditProfile.vue';
-
+   import UsernameFind from '@/components/UsernameFind.vue';
+import PwFind from '@/components/PwFind.vue';
 
 
 
@@ -37,9 +38,9 @@ const router = createRouter({
     { path: '/payment', name:'payment', component: Payment, meta: { requiresAuth: true } },
     { path: "/signin", name: "signin", component: SignForm},
     { path: "/signup", name: "signup", component: SignUpForm},
+    { path: "/pwFind", name: "PwFind", component: PwFind },
+    { path: "/UsernameFind", name: "UsernameFind", component: UsernameFind },
     { path: "/reviewInsert", name:"reviewInsert",component:ReviewInsertPage },
-
-
     {
       path: "/mypage",
       name: "myPage",
@@ -58,7 +59,7 @@ function isAuthenticated() {
 }
 
 
-const allowedPages = ['main', 'Login', 'Join', 'accDetail']; // 허용된 페이지 이름
+const allowedPages = ['main', 'Login', 'Join', 'accDetail', 'myPage', 'UsernameFind', 'PwFind']; // 허용된 페이지 이름
 // 글로벌 가드
 router.beforeEach((to, from, next) => {
   if (allowedPages.includes(to.name)) {

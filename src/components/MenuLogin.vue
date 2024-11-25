@@ -14,6 +14,7 @@
 import router from '@/router';
 import { isLoggedIn } from '@/stores/login';
 const login = () =>{
+  console.log("dd")
   router.push({name : "signin"});
 }
 const signup = () =>{

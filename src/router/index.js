@@ -38,11 +38,14 @@ const router = createRouter({
     { path: "/UsernameFind", name: "usernameFind", component: UsernameFind },
     { path: "/reviewInsert:accomNum", name:"reviewInsert",component:ReviewInsertPage },
     { path: "/mypage", name: "myPage", component: MyPage},
+
   ],
 })
+
 // function isAuthenticated() {
 //   return !!sessionStorage.getItem('token'); // JWT 토큰 유무로 인증 확인
 // }
+
 
 
 // const allowedPages = ['main', 'signin', 'signup', 'accDetail', 'myPage', 'usernameFind', 'pwFind']; // 허용된 페이지 이름
@@ -59,5 +62,6 @@ const router = createRouter({
 //       next();
 //   }
 // });
+
 
 export default router;

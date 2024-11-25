@@ -8,12 +8,13 @@
       <li v-if="!isLoggedIn" @click="pwFind">비밀번호 찾기</li>
       <li v-if="isLoggedIn" @click="myPage">마이페이지</li>
     </ul>
-  </label>
+  </label>  
 </template>
 <script setup>
 import router from '@/router';
 import { isLoggedIn } from '@/stores/login';
 const login = () =>{
+  console.log("dd")
   router.push({name : "signin"});
 }
 const signup = () =>{
@@ -40,4 +41,5 @@ const pwFind =() => {
 const myPage = () => {
   router.push({name: "myPage"})
 }
+
 </script>

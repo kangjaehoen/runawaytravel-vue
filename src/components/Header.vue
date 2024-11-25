@@ -7,6 +7,7 @@
       </div>
       <div class="headerRight">
       <Menu></Menu>
+      
       </div>
     </header>
   </template>

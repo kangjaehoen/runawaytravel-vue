@@ -165,6 +165,10 @@ import GuestCounter from '@/components/GuestCounter.vue';
 import axios from 'axios';
 import ReviewPage from '@/pages/ReviewPage.vue';
 
+//url 파라미터 가져오기
+const route = useRoute();
+const accomNum = route.params.accomNum;
+
 // 숙소 정보 로드 함수
 const accomInfo = async () => {
     try {
@@ -303,9 +307,9 @@ const imagenumplus = () =>{
     }  
 }
 
-//url 파라미터 가져오기
-const route = useRoute();
-const accomNum = route.params.accomNum;
+
+
+
 
 
 const updateCheckIn = async (value) => {

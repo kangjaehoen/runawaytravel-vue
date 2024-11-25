@@ -70,6 +70,7 @@ const reservationInfo= ref({});
 const images = ref([]);
 const imagenum = ref(0);
 
+
 //query전달 외 accom정보들
 const resAccom = async () => {
     try{
@@ -123,6 +124,7 @@ const handleOrder = async () => {
 
 
  // 예약 정보 삽입
+
  const insertReservation = (reservationInfo) => {
     const token = sessionStorage.getItem("token");
     if (token) {
@@ -153,7 +155,6 @@ const handleOrder = async () => {
         return Promise.resolve(false); // Promise 반환을 유지하기 위해 resolve로 처리
     }
 };
-
 
 
 

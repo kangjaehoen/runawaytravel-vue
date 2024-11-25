@@ -1,3 +1,4 @@
+
 <template><div class="box">
   <div class="container">
     <h2>비밀번호 찾기</h2>
@@ -52,6 +53,7 @@
 </div>
 </template>
 
+
   
   <script setup>
   import axios from "axios";
@@ -70,6 +72,7 @@
   const pwFind = async () => {
     try {
       const response = await axios.post("http://localhost:8086/api/PwFind", state.form, {
+
         headers: {
           "X-Requested-With": "XMLHttpRequest",
           "Content-Type": "application/json"
@@ -93,6 +96,7 @@
   </script>
   
   <style scoped>
+
     .box{
   min-height: 700px;
 }
@@ -168,5 +172,4 @@
     color: #28a745;
   }
   </style>
-  
   

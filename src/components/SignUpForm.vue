@@ -78,3 +78,67 @@
     }
   };
   </script>
+  <style scoped>
+  .join-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+  }
+  
+  .join-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  form div {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 5px;
+  }
+  
+  input, select, button {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  input:focus, select:focus, button:focus {
+    border-color: #45a049;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  button {
+    background-color: #8dbf3d;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  .response-message {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: #8dbf3d;
+  }
+  </style>

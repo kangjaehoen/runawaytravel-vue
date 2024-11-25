@@ -1,9 +1,8 @@
 <template>
-    <div class="wrapper">
-
+    <div>
       <Header></Header>
       <RouterView></RouterView>
-  </div>
+    </div>
   <br>
   <Footer></Footer>
 </template>

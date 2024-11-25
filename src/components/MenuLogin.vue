@@ -6,13 +6,15 @@
       <li v-if="isLoggedIn" @click="logout">로그아웃</li>
       <li v-if="isLoggedIn" @click="myreservation">나의 예약 페이지</li>
       <li v-if="isLoggedIn" @click="wishListSelect">나의 위시리스트</li>
+      <li v-if="isLoggedIn" @click="myPage">마이페이지</li>
     </ul>
-  </label>
+  </label>  
 </template>
 <script setup>
 import router from '@/router';
 import { isLoggedIn } from '@/stores/login';
 const login = () =>{
+  console.log("dd")
   router.push({name : "signin"});
 }
 const signup = () =>{
@@ -29,5 +31,8 @@ const myreservation = () =>{
 }
 const wishListSelect = () => {
   router.push({name : "wishlist"})
+}
+const myPage = () => {
+  router.push({name: "myPage"})
 }
 </script>

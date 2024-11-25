@@ -11,8 +11,11 @@ import SellerPage from '@/pages/SellerPage.vue';
 import ReviewInsertPage from '@/pages/ReviewInsertPage.vue';
 
 import Wishlist from '@/views/WishList.vue';
+
 import SignForm from '@/components/SignInForm.vue';
 import SignUpForm from '@/components/SignUpForm.vue';
+   import MyPage from '../views/MyPage.vue';
+   import EditProfile from '@/views/EditProfile.vue';
 
 
 
@@ -34,25 +37,41 @@ const router = createRouter({
     { path: '/payment', name:'payment', component: Payment, meta: { requiresAuth: true } },
     { path: "/signin", name: "signin", component: SignForm},
     { path: "/signup", name: "signup", component: SignUpForm},
-    { path: "/reviewInsert", name:"reviewInsert",component:ReviewInsertPage }
+    { path: "/reviewInsert", name:"reviewInsert",component:ReviewInsertPage },
+
+
+    {
+      path: "/mypage",
+      name: "myPage",
+      component: MyPage,
+    },
+    {
+      path: "/editProfile",
+      name: "EditProfile",
+      component: EditProfile,
+    }
 
   ],
 })
-// function isAuthenticated() {
-//   return !!sessionStorage.getItem('token'); // JWT 토큰 유무로 인증 확인
-// }
+function isAuthenticated() {
+  return !!sessionStorage.getItem('token'); // JWT 토큰 유무로 인증 확인
+}
 
-// const allowedPages = ['main', 'Login', 'Join', 'accDetail']; // 허용된 페이지 이름
-// // 글로벌 가드
-// router.beforeEach((to, from, next) => {
-//   if (allowedPages.includes(to.name)) {
-//     next(); // 화이트리스트에 있으면 진행
-//   } else if (to.meta.requiresAuth && !isAuthenticated()) {
-//       // 인증이 필요한 페이지지만 로그인되지 않은 경우
-//       next({ name: 'Login' }); // 로그인 페이지로 리다이렉트
-//       // 조건을 만족하면 라우트 진행
-//       next();
-//   }
-// });
+
+const allowedPages = ['main', 'Login', 'Join', 'accDetail']; // 허용된 페이지 이름
+// 글로벌 가드
+router.beforeEach((to, from, next) => {
+  if (allowedPages.includes(to.name)) {
+    console.log("허용된 페이지당 힛");
+    next(); // 화이트리스트에 있으면 진행
+  } else if (to.meta.requiresAuth && !isAuthenticated()) {
+      console.log("인증이 필요한 페이지임");
+      // 인증이 필요한 페이지지만 로그인되지 않은 경우
+      next({ name: 'Login' }); // 로그인 페이지로 리다이렉트
+      // 조건을 만족하면 라우트 진행
+      next();
+  }
+});
+
 
 export default router;

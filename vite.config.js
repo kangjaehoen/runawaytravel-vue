@@ -15,24 +15,8 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
-
-  // server: {
-  //   proxy: {
-  //     '/reservation': {
-  //       target: 'http://localhost:8086', // 백엔드 서버의 주소와 포트 (예: Spring Boot 서버)
-  //       changeOrigin: true,
-  //       secure: false,
-  //       rewrite: (path) => path.replace(/^\/reservation/, '/reservation') 
-  //     }
-  //   }
-  // }
-
-
-
   server: {
-    proxt: {
-      "":"http://localhost:8086",
-    },
+    host: '0.0.0.0',
+    port: 5173,
   },
 });
-

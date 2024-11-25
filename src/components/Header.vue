@@ -21,6 +21,7 @@ import Menu from './Menu.vue';
   display: flex;
   justify-content: space-between;
   min-width: 1200px;
+  min-height: 170px;
 }
 
 .logo img {

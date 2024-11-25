@@ -11,7 +11,9 @@
 
     <div class="review-form">
         <div class="left-column">
-            <div class="image-placeholder">숙소 이미지</div>
+            <div class="image-placeholder">
+                <img :src="images.length==0?'/regformpic.png':images[imagenum].filePath">
+            </div>
             <div class="property-name">{{list.accName}}</div>
         </div>
     </div>    
@@ -30,12 +32,16 @@ console.log(accomNum);
 const list = ref({});
 const aVO = ref({});
 
+const images = ref([]);
+const imagenum = ref(0);
+
 const accomInfo = async () => {
 try {
     const response = await axios.get(`http://localhost:8086/api/accDetail/${accomNum}`);
     if (response && response.data) {
         aVO.value= response.data.accom;
         list.value = response.data.accom;
+        images.value = response.data.images;
 
         console.log(list.value.accName);
 
@@ -58,6 +64,10 @@ onMounted(() => {
 });
 </script>
 
-<style>
+<style scoped>
+img{
+    width: 100%;
+    height: 100%;
+}
 
 </style>

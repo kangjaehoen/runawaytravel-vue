@@ -7,7 +7,7 @@
                         <div class="accimg-wrapper">
                         <img class="accimg" :src="accomimg ? `${accomimg.filePath}` : '/ocean.jpg'" 
                             @click="goDetailPage(accom.accomNum)">
-                        <img  @click="clickHeart($event, accom.accomNum)" :src="heartImage" class="heartImg">
+                        <img v-if="isLoggedIn" @click="clickHeart($event, accom.accomNum)" :src="heartImage" class="heartImg">
                         </div>
                     </td>
                 </tr>
@@ -31,6 +31,7 @@ import WishListClickInsert from '@/components/WishListClickInsert.vue'
 import WishListClickDelete from '@/components/WishListClickDelete.vue'
 import router from '@/router';
 import { jwtDecode } from "jwt-decode";
+import { isLoggedIn } from '@/stores/login';
 const param = defineProps({
     accom: Object,
 });
@@ -54,34 +55,34 @@ const loadimg = async () => {
 
 const heart = async () => { 
     const token = sessionStorage.getItem("token");
+    if(isLoggedIn.value){
+        const decodedToken = jwtDecode(token); 
+        let userName = decodedToken.username || "";
+        console.log(userName); // 문제가 없으면 이 줄은 정상적으로 실행됩니다.
 
-    console.log('Token', token); 
-    const decodedToken = jwtDecode(token); 
-    let userName = decodedToken.username || "";
-    console.log(userName); // 문제가 없으면 이 줄은 정상적으로 실행됩니다.
-
-    if (token) {
-        axios.get("http://localhost:8086/api/wish/"+userName, {
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    Authorization: `${token}`,
+        if (token) {
+            axios.get("http://localhost:8086/api/wish/"+userName, {
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        Authorization: `${token}`,
+                    }
+                })
+            .then((response)=>{
+                const isWishlisted = response.data.some((item) => 
+                    item.accomNum.accomNum === param.accom.accomNum
+                );
+                if (isWishlisted) {
+                    heartImage.value = "/images/FullLove.png";
+                } else {
+                    heartImage.value = "/images/EmptyLove.png";
                 }
             })
-        .then((response)=>{
-            const isWishlisted = response.data.some((item) => 
-                item.accomNum.accomNum === param.accom.accomNum
-            );
-            if (isWishlisted) {
-                heartImage.value = "/images/FullLove.png";
-            } else {
-                heartImage.value = "/images/EmptyLove.png";
-            }
-        })
-        .catch(error => {
-            console.error("Failed to fetch accommodation list:", error);
-        });
-    } else {
-        // console.log("No token found");
+            .catch(error => {
+                console.error("Failed to fetch accommodation list:", error);
+            });
+        } else {
+            // console.log("No token found");
+        }
     }
 };
 

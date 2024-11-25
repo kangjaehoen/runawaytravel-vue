@@ -5,7 +5,7 @@
                 <tr>
                     <td class="accimg-container">
                         <div class="accimg-wrapper">
-                        <img class="accimg" :src="accomimg ? `${accomimg.filePath}` : '/ocean.jpg'" 
+                        <img class="accimg" :src="accomimg ? `${accomimg.filePath}` : '/regformpic.png'" 
                             @click="goDetailPage(accom.accomNum)">
                         <img v-if="isLoggedIn" @click="clickHeart($event, accom.accomNum)" :src="heartImage" class="heartImg">
                         </div>

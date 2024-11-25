@@ -121,25 +121,34 @@ const handleOrder = async () => {
 
 
  // 예약 정보 삽입
-const insertReservation = async (reservationInfo) => {
-    try {
-        const response= await axios.put(`http://localhost:8086/reservation/insertRes`, reservationInfo,{
-            // headers: {
-            //         "X-Requested-With": "XMLHttpRequest",
-            //         Authorization: `${token}`, // Authorization 헤더 추가
-            //     },
-            }
-        );
-
-        if(response && response.data){
-            reservationInfo.resNum=response.data.resNum;
-            alert('예약이 성공적으로 완료되었습니다.');
-            return true;
-        }
-    } catch (error) {
-        alert('예약에 실패했습니다.');
-        console.error("Error:", error);
-        return false;
+ const insertReservation = (reservationInfo) => {
+    const token = sessionStorage.getItem("token");
+    if (token) {
+        return axios
+            .put(
+                `http://localhost:8086/api/reservation/insertRes`,
+                reservationInfo,
+                {
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        Authorization: `${token}`, // Authorization 헤더 추가
+                    },
+                }
+            )
+            .then((response) => {
+                if (response && response.data) {
+                    reservationInfo.resNum = response.data.resNum;
+                    // alert("예약이 성공적으로 완료되었습니다.");
+                    return true;
+                }
+            })
+            .catch((error) => {
+                alert("예약에 실패했습니다.");
+                console.error("Error:", error.response || error);
+            });
+    } else {
+        alert("로그인 토큰이 없습니다. 다시 로그인해주세요.");
+        return Promise.resolve(false); // Promise 반환을 유지하기 위해 resolve로 처리
     }
 };
 
@@ -230,6 +239,7 @@ window.IMP.request_pay(
         insertPayment(payInfo);
     } else {
         alert(`결제에 실패하였습니다.\n실패사유: ${res.error_msg}`);
+        return false;
     }
     }
     );

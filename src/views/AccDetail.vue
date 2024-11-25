@@ -10,7 +10,7 @@
 
     <div class="row">
         <div class="imagebox" @click="imagenumplus">
-            <img v-if="images.length>0" :src="images[imagenum].filePath">
+            <img :src="images.length==0?'/regformpic.png':images[imagenum].filePath">
         </div>
     </div>
 

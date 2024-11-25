@@ -13,7 +13,7 @@
             <p>게스트: 성인 {{ adultCnt }}명<span v-if="kidCnt > 0">, 어린이 {{ kidCnt }}명</span></p>
         </div>
         <div class="price-details">
-            <img src="/images/room.png" alt="서울의 호스텔" class="room-image" />
+            <img :src="images.length==0?'/regformpic.png':images[imagenum].filePath">
             <div class="price-texts">
             <p>{{ accom?.accName }}</p>
             <p>★ {{ revRate }} 후기({{ revCnt }}개)</p>
@@ -38,7 +38,7 @@
         </div>
         <div class="basic-rules">
         <p><strong>이용규칙</strong></p>
-        <p>{{ accom?.accomRule }}</p>
+        <p v-if="accom?.accomRule">이용규칙: {{ accom.accomRule }}</p>
         </div>
     </div>
     </div>
@@ -68,6 +68,9 @@ const accom= ref({});
 const accomNum = ref(route.query.accomnum);
 const reservation = ref([]);
 const reservationInfo= ref({});
+
+const images = ref([]);
+const imagenum = ref(0);
 
 //query전달 외 accom정보들
 const resAccom = async () => {
@@ -321,7 +324,7 @@ margin: 20px 0;
             background-color: white;
         }
 
-        .room-image {
+        .price-details img {
             width: 150px;
             height: 150px;
             object-fit: cover;

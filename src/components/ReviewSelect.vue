@@ -52,7 +52,7 @@
         const token = localStorage.getItem("token");
         console.log('Token', token);
         
-        axios.get("http://localhost:8086/review/"+props.accomNum+"?page="+page+"&&size="+6)
+        axios.get("http://localhost:8086/api/review/"+props.accomNum+"?page="+page+"&&size="+6)
             .then((res) =>{
                 reviewData.value = res.data;
     })

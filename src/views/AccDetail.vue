@@ -149,6 +149,7 @@
         </div>
     </div>
     </div>
+    <ReviewPage :accomNum="accomNum"></ReviewPage>
 </div>
 </template>
 
@@ -162,7 +163,11 @@ import ko from 'vue-datepicker-next/locale/ko';
 import ConvenienceItem from '@/components/ConvenienceItem.vue';
 import GuestCounter from '@/components/GuestCounter.vue';
 import axios from 'axios';
+import ReviewPage from '@/pages/ReviewPage.vue';
 
+//url 파라미터 가져오기
+const route = useRoute();
+const accomNum = route.params.accomNum;
 
 // 숙소 정보 로드 함수
 const accomInfo = async () => {
@@ -181,6 +186,7 @@ const accomInfo = async () => {
                 list.value = JSON.parse(list.value); 
             }
         }
+
     } catch (error) {
         console.log('숙소정보를 불러오던 중 에러발생', error);
     }
@@ -291,11 +297,6 @@ const totalDays = ref(0);
 const totalPayment = ref(0);
 const guestCounterVisible = ref(true);
 
-//url 파라미터 가져오기
-const route = useRoute();
-const accomNum = route.params.accomNum;
-
-
 const images = ref([]);
 const imagenum = ref(0);
 const imagenumplus = () =>{
@@ -305,6 +306,10 @@ const imagenumplus = () =>{
         imagenum.value = 0;
     }  
 }
+
+
+
+
 
 
 const updateCheckIn = async (value) => {
@@ -566,7 +571,12 @@ header {
 .row {
     overflow: visible; /* 팝업이 잘리지 않도록 설정 */
 }
-
-
-
+.imagebox{
+    width : 1100px;
+    height: 500px;
+}
+.imagebox img{
+    width: 100%;
+    height: 100%;
+}
 </style>

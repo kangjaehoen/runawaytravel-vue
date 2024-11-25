@@ -37,8 +37,7 @@
         </p>
         </div>
         <div class="basic-rules">
-        <p><strong>이용규칙</strong></p>
-        <p v-if="accom?.accomRule">이용규칙: {{ accom.accomRule }}</p>
+        <p v-if="accom?.accomRule">이용규칙<br> {{ accom.accomRule }}</p>
         </div>
     </div>
     </div>
@@ -74,23 +73,25 @@ const imagenum = ref(0);
 
 //query전달 외 accom정보들
 const resAccom = async () => {
-  try {
-    const accomNum = route.query.accomnum || '';
-    if (!accomNum) {
-      return;
+    try{
+        const accomNum = route.query.accomnum || '';
+        if(!accomNum){
+            return;
+        }
+        const response= await axios.get(`http://localhost:8086/api/reservation/info`,{
+            params: {accomNum},
+        });
+        if(response && response.data){
+            revCnt.value= response.data.revCnt;
+            revRate.value= response.data.revRate;
+            accom.value= response.data.accom;
+            reservation.value= response.data.reservation;
+        }
+    
+    }catch(error){
+        console.error("숙소 정보를 불러오던 중 에러발생", error.response || error);
     }
-    const response = await axios.get(`http://localhost:8086/api/reservation/info`, {
-      params: { accomNum },
-    });
-    if (response && response.data) {
-      revCnt.value = response.data.revCnt;
-      revRate.value = response.data.revRate;
-      accom.value = response.data.accom;
-      reservation.value = response.data.reservation;
-    }
-  } catch (error) {
-    console.error("숙소 정보를 불러오던 중 에러발생", error.response || error);
-  }
+
 };
 
 
@@ -134,8 +135,7 @@ const insertReservation = (reservationInfo) => {
                         "X-Requested-With": "XMLHttpRequest",
                         Authorization: `${token}`, // Authorization 헤더 추가
                     },
-                }
-            )
+             })
             .then((response) => {
                 if (response && response.data) {
                     reservationInfo.resNum = response.data.resNum;
@@ -153,7 +153,6 @@ const insertReservation = (reservationInfo) => {
         return Promise.resolve(false); // Promise 반환을 유지하기 위해 resolve로 처리
     }
 };
-
 
 
 

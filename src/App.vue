@@ -1,9 +1,8 @@
 <template>
-    <div class="wrapper">
-
+    <div>
       <Header></Header>
       <RouterView></RouterView>
-  </div>
+    </div>
   <br>
   <Footer></Footer>
 </template>
@@ -20,5 +19,8 @@ import Footer from './components/Footer.vue';
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2310@1.0/NPSfontBold.woff2') format('woff2');
     font-weight: 700;
     font-style: normal;
+}
+*{
+  font-family: 'NPSfontBold';
 }
 </style>

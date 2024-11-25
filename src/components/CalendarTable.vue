@@ -36,7 +36,6 @@ import CalendarOneDetail from './CalendarOneDetail.vue';
     const month = ref(now.getMonth());
     const reslist = reactive([]);
     const resdaylist = reactive([]);
-    
     const calendarstart = computed(()=>{
         const firstday = new Date(year.value,month.value,1);
         return new Date(firstday.setDate(1-firstday.getDay()));
@@ -70,10 +69,15 @@ import CalendarOneDetail from './CalendarOneDetail.vue';
             month.value--;
         }
         await resmonth();
-    }    
+    }
+    const token = sessionStorage.getItem("token");
     const resmonth = async() =>{
         await axios
-        .get(`http://localhost:8086/resmonth?start=${calendarstarttext.value}&end=${calendarendtext.value}`)
+        .get(`http://localhost:8086/resmonth?start=${calendarstarttext.value}&end=${calendarendtext.value}`,{headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    Authorization: `${token}`, 
+                }})
+
         .then((response)=>{
             reslist.splice(0,reslist.length, ...response.data.resmonth);
             //console.log(reslist)

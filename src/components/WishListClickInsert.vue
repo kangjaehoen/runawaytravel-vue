@@ -6,6 +6,8 @@
 <script setup>
     import axios from 'axios';
     import { reactive, ref, defineProps,  defineExpose } from 'vue';
+    import { jwtDecode } from "jwt-decode";
+
 
     const props = defineProps({
         accom : Number,
@@ -13,19 +15,24 @@
     })
 
     const wishList = reactive({
+        userName:'',
         accomNum: props.accom, // 부모에서 전달받은 accomNum
         checkStatus: '1',
     });
     
     const clickHeart = async (accomNum) => {
         wishList.accomNum = accomNum;
-        const token = localStorage.getItem("token");
-    console.log('Token', token);
+        const token = sessionStorage.getItem("token");
+        console.log('Token', token);
+        const decodedToken = jwtDecode(token); 
+        wishList.userName = decodedToken.username || "";
+        console.log("하트 인서트 :"+wishList.userName);
+
 
     if (token) {
         try {
-            const response = await axios.post('http://localhost:8086/wish', {
-            wishList,
+            const response = await axios.post('http://localhost:8086/api/wish', 
+            wishList,{
             headers: {
                     "X-Requested-With": "XMLHttpRequest",
                     Authorization: `${token}`, 
@@ -38,7 +45,7 @@
             }
         } catch (error) {
             console.error("Error removing from wishlist:", error);
-            alert("위시리스트 삭제 중 오류가 발생했습니다.");
+            alert("위시리스트 등록 중 오류가 발생했습니다.");
         }
     } else {
         alert("로그인이 필요합니다.");

@@ -5,6 +5,7 @@
 <script setup>
     import axios from 'axios';
     import { reactive, defineProps,  defineExpose } from 'vue';
+    import { jwtDecode } from "jwt-decode";
 
     // const props = defineProps({
     //     accom : Number,
@@ -12,18 +13,22 @@
     // })
 
     const wishList = reactive({
+        userName : '',
         accomNum: 0, 
     });
 
     const clickHeart = async (accomNum) => {
     wishList.accomNum = accomNum;
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     console.log('Token', token);
+    const decodedToken = jwtDecode(token); 
+    wishList.userName = decodedToken.username || "";
+    console.log("하트 사가제 :"+wishList.userName);
 
     if (token) {
         try {
-            const response = await axios.delete(`http://localhost:8086/wish`, {
-                wishList, 
+            const response = await axios.delete("http://localhost:8086/api/wish/"+wishList.userName+"/"+wishList.accomNum,  {
+
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
                     Authorization: `${token}`, 
